@@ -37,7 +37,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://192.168.1.10:3001/login", {
+      let data = await axios.post("http://localhost:3001/login", {
         username,
         password,
       });

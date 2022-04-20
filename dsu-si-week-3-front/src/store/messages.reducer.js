@@ -40,7 +40,7 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
+    let data = await axios.get("http://localhost:3001/messages");
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {
