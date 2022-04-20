@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require('cors');
 const app = express();
 const server = require("http").createServer(app);
+const credentials = require('./config/config');
 const { Server } = require("socket.io");
 const io = new Server(server,  { 
   cors: {    
@@ -71,7 +72,7 @@ io.on("connection", (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://192.168.1.10:27017/admin", { useNewUrlParser: true })
+	.connect(credentials.mongo.uri, { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.

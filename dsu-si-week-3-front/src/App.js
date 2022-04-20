@@ -8,8 +8,9 @@ import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
+import config from './config/config';
 
-const ENDPOINT = "http://192.168.1.10:3001";
+const ENDPOINT = config.BACKEND;
 let socket;
 function App() {
   const dispatch = useDispatch();

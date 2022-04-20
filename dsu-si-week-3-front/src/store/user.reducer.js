@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import config from '../config/config';
 // Slice
 
 // const initialUser = localStorage.getItem('user')
 //   ? JSON.parse(localStorage.getItem('user'))
 //   : null
+const ENDPOINT = config.BACKEND;
 
 const slice = createSlice({
   name: "user",
@@ -37,7 +38,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://192.168.1.10:3001/login", {
+      let data = await axios.post(`${ENDPOINT}/login`, {
         username,
         password,
       });
