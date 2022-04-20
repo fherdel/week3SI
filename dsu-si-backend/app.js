@@ -14,6 +14,7 @@ const swaggerDocument = require("./swagger.json");
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
 const { getUsers } = require("./services/users.service");
+app.use(express.urlencoded({ extended: true }));
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -26,33 +27,34 @@ app.use(cors({ origin: '*' }));
 app.set("view engine", "ejs");
 
 // Enpoints
-app.get('/users', async (req,res)=>{
-  const users = await getUsers()
-  res.json(users);
-})
+require("./routes/routes")(app)
+// app.get('/users', async (req,res)=>{
+//   const users = await getUsers()
+//   res.json(users);
+// })
 
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
-  res.json(messages);
-});
+// app.get("/messages", (req, res) => {
+//   const messages=messagesService.getMessagesHistory()
+//   res.json(messages);
+// });
 
-/**
- * implement data on mongo
- */
-app.post('/users', async (req,res)=>{
-  console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
-})
+// /**
+//  * implement data on mongo
+//  */
+// app.post('/users', async (req,res)=>{
+//   console.log(">>>>>>>>>> post user")
+//   res.status(200).send("logic not implemented yet :c")
+// })
 
-app.delete("/messages", (req, res) => {
-  messagesService.clearMessages();
-  io.emit("clearMessages");
-  res.status(200).send();
-});
+// app.delete("/messages", (req, res) => {
+//   messagesService.clearMessages();
+//   io.emit("clearMessages");
+//   res.status(200).send();
+// });
 
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
-})
+// app.post('/login', (req,res)=>{
+//   res.status(200).send("not implemented yet :'c")
+// })
 
 
 
@@ -71,7 +73,7 @@ io.on("connection", (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://192.168.1.10:27017/admin", { useNewUrlParser: true })
+	.connect("mongodb://localhost:27017/admin", { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.
@@ -83,3 +85,4 @@ mongoose
   })
 
 
+  // docker run -d -p 27017:27017 --name dbmongo mongo

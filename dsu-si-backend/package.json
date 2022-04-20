@@ -4,6 +4,7 @@
   "description": "DSU Chat",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon app",
     "test": "jest"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "mongoose": "^6.3.0",
+    "nodemon": "^2.0.15",
     "socket.io": "^4.4.0",
     "swagger-ui-express": "^4.3.0"
   },
