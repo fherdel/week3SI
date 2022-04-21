@@ -6,7 +6,6 @@ export default function ChatBar({ emitMessage }) {
   const { user } = useSelector((state) => state.user);
   const [message, setMessage] = useState("");
   const sendMessage = () => {
-    console.log(user, message);
     emitMessage(
       user || "unknown",
       message,

@@ -5,7 +5,7 @@ import axios from "axios";
 const slice = createSlice({
   name: "messages",
   initialState: {
-    messages: [{ nombre: "juan", mensaje: "holi", _id: "1" }],
+    messages: [{ username: "juan", message: "holi"}],
   },
   reducers: {
     pushMessage: (state, action) => {
@@ -36,10 +36,15 @@ export const addMessage = (username, message) => async (dispatch) => {
 };
 
 //obtener todos los mensajes
-export const getMessages = () => async (dispatch) => {
+export const getMessages = (token) => async (dispatch) => {
   try {
-    let data = await axios.get("http://localhost:3001/messages");
-    console.log("data: ", data);
+    let data = await axios.get("http://localhost:3001/messages",
+    {
+      headers:{
+        "Authorization": `Bearer: ${token}`
+      }
+    });
+    console.log("data: ", data.data);
     dispatch(setMessages(data));
   } catch (e) {
     console.log("e: ", e);
@@ -48,9 +53,14 @@ export const getMessages = () => async (dispatch) => {
 };
 
 //eliminar todos los mensajes
-export const deleteAll = () => async (dispatch) => {
+export const deleteAll = (token) => async (dispatch) => {
     try {
-      let data = await axios.delete("http://localhost:3001/messages");
+      let data = await axios.delete("http://localhost:3001/messages",
+      {
+        headers:{
+          "Authorization": `Bearer: ${token}`
+        }
+      });
       console.log(data)
       dispatch(deleteAllMessages());
     } catch (e) {

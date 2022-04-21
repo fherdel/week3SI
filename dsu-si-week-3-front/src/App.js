@@ -14,12 +14,11 @@ let socket;
 function App() {
   const [status, setStatus]=useState(false)
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  const { user, token } = useSelector((state) => state.user);
   useEffect(() => {
-    dispatch(getMessages());
+    
     socket = socketIOClient(ENDPOINT);
     console.log("socket: ", socket);
-
     socket.on("chatMessageEmitted", ({ username, message }) => {
       dispatch(addMessage( username, message ))
     });
@@ -43,13 +42,14 @@ function App() {
   };
   //eliminar todos los mensajes
   const handleReset = async () => {
-    dispatch(deleteAll())   
+    dispatch(deleteAll(token))   
   };
   //handle for signup
   const handleSignUp = async (values, setSubmitting) => {
     setSubmitting(true);
     const response=await dispatch(signup(values))
-    console.log(response)
+    setStatus(response)
+    dispatch(getMessages(token));  
     setSubmitting(false);
   };
 
@@ -62,7 +62,8 @@ function App() {
           initialValues={{ username: "", password: "" }}
           onSubmit={async (values, { setSubmitting }) => {
             setSubmitting(true);
-            setStatus(await dispatch(login(values)));
+            const result=await dispatch(login(values))
+            setStatus(result);            
             setSubmitting(false);
           }}
           validate={(values) => {
