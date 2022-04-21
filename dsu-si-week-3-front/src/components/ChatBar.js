@@ -8,9 +8,9 @@ export default function ChatBar({ emitMessage }) {
   console.log('message: ', message);
 
   const sendMessage = () => {
-    console.log(user, message);
+    //console.log(user, message);
     emitMessage(
-      user || "unknown",
+      user.username || "unknown",
       message,
     );
   };

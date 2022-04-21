@@ -8,7 +8,7 @@ export default function Messages() {
   return (
     <div style={{ margin: "10px 20px", height: 500, overflowY: "auto" }}>
       <h2 >Chat:</h2>
-      {messages.map((message, index) => (
+      {messages instanceof Array && messages.map((message, index) => (
         <div
           key={index}
           style={{

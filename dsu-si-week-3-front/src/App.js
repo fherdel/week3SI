@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
-import { login, logout } from "./store/user.reducer";
+import { login, logout, createUser } from "./store/user.reducer";
+
 
 import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
@@ -14,12 +15,14 @@ let socket;
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+
   useEffect(() => {
     dispatch(getMessages());
     socket = socketIOClient(ENDPOINT);
     console.log("socket: ", socket);
 
     socket.on("chatMessageEmitted", ({ username, message }) => {
+      console.log('init chat emitted',username, message)
       dispatch(addMessage( username, message ))
     });
 
@@ -28,14 +31,7 @@ function App() {
     });
   }, []);
 
-  if (user) {
-    return (
-      <div>
-        {user.username}
-        <button onClick={() => dispatch(logout())}>Logout</button>
-      </div>
-    );
-  }
+
 
 
   const emitMessage = (username, message) => {
@@ -43,7 +39,7 @@ function App() {
       username,
       message,
     });
-    dispatch(addMessage( "My self", message ))
+    dispatch(addMessage( username, message ))
   };
 
   /**
@@ -53,7 +49,7 @@ function App() {
     console.log("handleSingIn");
     console.log("values: ", values);
     setSubmitting(true);
-    //dispatch(createUser(user,message))
+    dispatch(createUser(values.username,values.password))
     setSubmitting(false);
   };
 
@@ -93,12 +89,14 @@ function App() {
               >
                 Sing in
               </button>
+              {user &&  <button onClick={() => dispatch(logout())}>Logout</button>}
             </Form>
           )}
         </Formik>
       </div>
       <Messages  />
       <ChatBar emitMessage={emitMessage}/>
+      
     </div>
   );
 }
