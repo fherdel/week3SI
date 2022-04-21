@@ -39,8 +39,23 @@ export const login = ({ username, password }) => async (dispatch) => {
 			username,
 			password
 		});
-		console.log('data: ', data);
-		dispatch(loginSuccess());
+		const { user } = data.data;
+		console.log('data: ', user);
+		dispatch(loginSuccess(user));
+	} catch (e) {
+		console.log('e: ', e);
+		return console.error(e.message);
+	}
+};
+
+export const createUser = ({ username, password }) => async (dispatch) => {
+	try {
+		let data = await axios.post('http://localhost:3001/users', {
+			username,
+			password
+		});
+		console.log('data: ', data.data.username);
+		dispatch(loginSuccess(data.data.username));
 	} catch (e) {
 		console.log('e: ', e);
 		return console.error(e.message);

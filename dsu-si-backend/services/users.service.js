@@ -39,3 +39,13 @@ module.exports.getSingleUser = async (username, password) => {
 		return null;
 	}
 };
+
+module.exports.clearUsers = async () => {
+	try {
+		await model_user.collection.drop();
+		return [];
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+};

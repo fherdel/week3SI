@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Field, Form, Formik } from 'formik';
-import { login, logout } from './store/user.reducer';
+import { login, logout, createUser } from './store/user.reducer';
 
 import { getMessages, addMessage } from './store/messages.reducer';
 import socketIOClient from 'socket.io-client';
@@ -28,15 +28,6 @@ function App() {
 		});
 	}, []);
 
-	if (user) {
-		return (
-			<div>
-				{user.username}
-				<button onClick={() => dispatch(logout())}>Logout</button>
-			</div>
-		);
-	}
-
 	const emitMessage = (username, message) => {
 		socket.emit('chatMessageEmitted', {
 			username,
@@ -46,16 +37,25 @@ function App() {
 	};
 
 	/**
-   * add logic to create users
-   */
+	 * add logic to create users
+	 */
 	const handleSingIn = async (values, setSubmitting) => {
 		console.log('handleSingIn');
-		console.log('values: ', values);
 		setSubmitting(true);
-		//dispatch(createUser(user,message))
+		dispatch(createUser(values));
 		setSubmitting(false);
 	};
 
+	if (user) {
+		return (
+			<div>
+				{user.username}
+				<button onClick={() => dispatch(logout())}>Logout</button>
+				<Messages />
+				<ChatBar emitMessage={emitMessage} />
+			</div>
+		);
+	}
 	// socket events
 
 	return (
@@ -93,8 +93,6 @@ function App() {
 					)}
 				</Formik>
 			</div>
-			<Messages />
-			<ChatBar emitMessage={emitMessage} />
 		</div>
 	);
 }

@@ -14,7 +14,7 @@ const swaggerDocument = require('./swagger.json');
 
 const mongoose = require('mongoose');
 const messagesService = require('./services/messages.service');
-const { getUsers, createUser, getSingleUser } = require('./services/users.service');
+const { getUsers, createUser, getSingleUser, clearUsers } = require('./services/users.service');
 const { readSync } = require('fs');
 
 let connectionCount = 0;
@@ -53,6 +53,11 @@ app.delete('/messages', (req, res) => {
 	messagesService.clearMessages();
 	io.emit('clearMessages');
 	res.status(200).send();
+});
+
+app.delete('/users', async (req, res) => {
+	const pre = await clearUsers();
+	res.status(200).send(pre);
 });
 
 app.post('/login', async (req, res) => {
