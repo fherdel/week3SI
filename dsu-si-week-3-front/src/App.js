@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
-import { login, logout } from "./store/user.reducer";
+import { login, logout, singin } from "./store/user.reducer";
 
 import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
@@ -13,6 +13,7 @@ import config from './config/config';
 const ENDPOINT = config;
 let socket;
 function App() {
+  const [isSingIn,SetIsSingIn] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
@@ -48,6 +49,7 @@ function App() {
     console.log("values: ", values);
     setSubmitting(true);
     //dispatch(createUser(user,message))
+    SetIsSingIn(true)
     setSubmitting(false);
   };
 
@@ -69,10 +71,14 @@ function App() {
       <div style={{ margin: "20px" }}>
         <Formik
           initialValues={{ username: "", password: "" }}
+          
           onSubmit={async (values, { setSubmitting }) => {
             console.log("submiting");
             setSubmitting(true);
-            await dispatch(login(values));
+            isSingIn ? await dispatch(singin(values)) : await dispatch(login(values));
+            values.password = ''
+            values.username = ''
+            SetIsSingIn(false)
             setSubmitting(false);
           }}
           validate={(values) => {
