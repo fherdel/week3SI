@@ -1,12 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+
+
 // Slice
-
-// const initialUser = localStorage.getItem('user')
-//   ? JSON.parse(localStorage.getItem('user'))
-//   : null
-
 const slice = createSlice({
   name: "user",
   initialState: {
@@ -44,7 +41,10 @@ export const login =
       });
 
       if (!data.data.error) {
-        console.log("data: ", data);
+        // set token in cookie
+        document.cookie = `token=${data.data.token}`;
+        console.log(data.data.token);
+
         dispatch(loginSuccess({ username, password }));
       } else {
         console.log("err bd: ", data.data.error);
@@ -66,6 +66,9 @@ export const createUser =
       });
 
       if (!data.data.error) {
+        // set token in cookie
+        document.cookie = `token=${data.data.token}`;
+
         console.log("data: ", data);
         dispatch(loginSuccess({ username, password }));
       } else {
@@ -84,6 +87,7 @@ export const createUser =
 export const logout = () => async (dispatch) => {
   try {
     // *****
+    document.cookie = `token=''`;
     return dispatch(logoutSuccess());
   } catch (e) {
     return console.error(e.message);

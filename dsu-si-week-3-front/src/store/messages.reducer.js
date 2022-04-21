@@ -1,7 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-// Slice
 
+// Get a cookie
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+// Slice
 const slice = createSlice({
   name: "messages",
   initialState: {
@@ -27,12 +44,23 @@ const { pushMessage, setMessages } = slice.actions;
 export const addMessage = (username, message) => async (dispatch) => {
   console.log("user: ", username);
   console.log("message: ", message);
+
   try {
-    let data = await axios.post("http://localhost:3001/messages",  {
-      username,
-      message,
-    });
-    dispatch(pushMessage({ message, username }));
+    let config = {
+      headers: {
+        authorization: getCookie("token"),
+      },
+    };
+
+    let data = await axios.post(
+      "http://localhost:3001/messages",
+      {
+        username: username.username,
+        message,
+      },
+      config
+    );
+    dispatch(pushMessage({ message, username:username.username }));
   } catch (e) {
     return console.error(e.message);
   }
@@ -42,8 +70,14 @@ export const addMessage = (username, message) => async (dispatch) => {
  * agregue aca la logica para incrustar los usuarios
  */
 export const getMessages = () => async (dispatch) => {
+  console.log('Holaaa')
   try {
-    let data = await axios.get("http://localhost:3001/messages");
+    let config = {
+      headers: {
+        authorization: getCookie("token"),
+      },
+    };
+    let data = await axios.get("http://localhost:3001/messages", config);
 
     if (!data.data.error) {
       console.log("data: ", data);

@@ -25,7 +25,8 @@ module.exports.getMessagesHistory = async (req, res) => {
  */
 module.exports.addToMessageHistory = async (values) => {
   let { username, message } = values;
-  console.log("val", values)
+
+
   // Create a new message model
   const newMessage = new Message({
     username,

@@ -4,6 +4,15 @@ const app = express();
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 const bodyParser = require("body-parser");
+// JSWT
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+// get config vars
+dotenv.config();
+// access config var
+process.env.TOKEN_SECRET;
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -25,6 +34,10 @@ const {
   loginUser,
   clearUsers,
 } = require("./services/users.service");
+const {
+  generateAccessToken,
+  authenticateToken,
+} = require("./services/auth.service");
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -37,37 +50,47 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Enpoints - User
 app.get("/users", async (req, res) => {
+  // Get users
   const users = await getUsers();
   res.json(users);
 });
 
 app.post("/users", async (req, res) => {
+  //Create new user
+  const token = generateAccessToken({ username: req.body.username });
   const user = await createUser(req.body);
-  res.json(user);
+  res.json({ ...user, token });
 });
 
 app.delete("/users", (req, res) => {
+  // delete users
   const users = clearUsers();
   res.status(200).send(users);
 });
 
 app.post("/login", async (req, res) => {
+  // Login
+  const token = generateAccessToken({ username: req.body.username });
   const user = await loginUser(req.body);
-  res.json(user);
+  console.log(user);
+  res.json({ ...user, token });
 });
 
 // Enpoints - Message
-app.get("/messages", async (req, res) => {
+app.get("/messages", authenticateToken, async (req, res) => {
+  //Get all messages
   const messages = await getMessagesHistory();
   res.json(messages);
 });
 
-app.post("/messages", (req, res) => {
+app.post("/messages", authenticateToken, (req, res) => {
+  // Create new message
   const messages = addToMessageHistory(req.body);
   res.json(messages);
 });
 
-app.delete("/messages", (req, res) => {
+app.delete("/messages", authenticateToken, (req, res) => {
+  // Delete all messages
   const messages = clearMessages();
   io.emit("clearMessages");
   res.status(200).send(messages);
