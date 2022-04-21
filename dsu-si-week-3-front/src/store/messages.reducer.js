@@ -9,7 +9,7 @@ const slice = createSlice({
   },
   reducers: {
     pushMessage: (state, action) => {
-    console.log('action: ', action);
+      console.log("action: ", action);
       state.messages = [...state.messages, action.payload];
     },
     setMessages: (state, action) => {
@@ -25,13 +25,23 @@ export default slice.reducer;
 const { pushMessage, setMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
+  console.log("user: ", username);
+  console.log("message: ", message);
   try {
-    // await api.post('/message/', { user, message })
-    dispatch(pushMessage({ message, username }));
+    await axios
+      .post("http://localhost:3001/messages", {
+        username: username,
+        message: message,
+      })
+      .then((response) => {
+        console.log(response);
+       dispatch(pushMessage({ message, username }));
+      })
+      .catch((err) => console.log(err));
+
+
   } catch (e) {
-    return console.error(e.message);
+    return console.error(e);
   }
 };
 
@@ -40,7 +50,7 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
+    let data = await axios.get("http://localhost:3001/messages");
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {

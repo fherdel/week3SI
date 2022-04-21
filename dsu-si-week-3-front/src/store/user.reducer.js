@@ -37,12 +37,15 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://192.168.1.10:3001/login", {
+      let data = await axios.get("http://localhost:3001/login", {
         username,
         password,
       });
-      console.log("data: ", data);
+      console.log("dataUser : ", data);
       dispatch(loginSuccess());
+
+
+      
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);

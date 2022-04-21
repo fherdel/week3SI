@@ -9,7 +9,7 @@ import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 
-const ENDPOINT = "http://192.168.1.10:3001";
+const ENDPOINT = "http://localhost:3001";
 let socket;
 function App() {
   const dispatch = useDispatch();
@@ -39,11 +39,12 @@ function App() {
 
 
   const emitMessage = (username, message) => {
+    console.log("-----",username)
     socket.emit("chatMessageEmitted", {
       username,
       message,
     });
-    dispatch(addMessage( "My self", message ))
+    dispatch(addMessage( username, message ))
   };
 
   /**

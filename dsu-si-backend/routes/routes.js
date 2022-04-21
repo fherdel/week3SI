@@ -8,7 +8,7 @@ const controllersMessage = require("../services/messages.service")
   // get user
   router.get("/user", controllers.getUsers);
   // get user
-  router.get("/user/:username", controllers.Login);
+  router.get("/login", controllers.Login);
 
   // Message
 //get Messages

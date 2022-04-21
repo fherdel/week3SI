@@ -12,9 +12,9 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
+const Message = require("./schemas/message.schema")
 const messagesService = require("./services/messages.service");
 const { getUsers } = require("./services/users.service");
-app.use(express.urlencoded({ extended: true }));
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -25,7 +25,10 @@ app.use(cors({ origin: '*' }));
 // Templating engine setup
 
 app.set("view engine", "ejs");
-
+// parse requests of content-type - application/json
+app.use(express.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 // Enpoints
 require("./routes/routes")(app)
 // app.get('/users', async (req,res)=>{
@@ -33,10 +36,25 @@ require("./routes/routes")(app)
 //   res.json(users);
 // })
 
-// app.get("/messages", (req, res) => {
-//   const messages=messagesService.getMessagesHistory()
-//   res.json(messages);
+// app.get("/messages", async (req, res) => {
+//   try{
+//     const messages = await Message.find();
+//  return res.status(200).send(messages);
+//   }catch(e){
+//   return   res.send("Error");
+//   }
 // });
+
+// app.post("/messages",async(req, res) => {
+//   console.log("---")
+//   try{
+//     const message = new Message({username: req.body.username, message:req.body.message})
+//     await message.save()
+//  return res.send(message)
+//   }catch(e){
+//     return res.send("Error");
+//   }
+// })
 
 // /**
 //  * implement data on mongo
@@ -61,15 +79,15 @@ require("./routes/routes")(app)
 /**
  * implement data on mongo
  */
-io.on("connection", (socket) => {
-  connectionCount += 1;
-  connectedUsers += 1;
+// io.on("connection", (socket) => {
+//   connectionCount += 1;
+//   connectedUsers += 1;
 
-  socket.on("chatMessageEmitted", ( {username, message} ) => {
-    messagesService.addToMessageHistory( username, message );
-    socket.broadcast.emit("chatMessageEmitted", { username, message });
-  });
-});
+//   socket.on("chatMessageEmitted", ( {username, message} ) => {
+//     messagesService.addToMessageHistory( username, message );
+//     socket.broadcast.emit("chatMessageEmitted", { username, message });
+//   });
+// });
 
 // Connect to MongoDB database
 mongoose

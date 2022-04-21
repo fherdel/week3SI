@@ -5,9 +5,9 @@ const Message = require("../schemas/message.schema")
 const getMessagesHistory = async(req, res) => {
   try{
     const messages = await Message.find();
-    return res.status(200).send(messages);
+ return res.status(200).send(messages);
   }catch(e){
-   return  res.status(500).send({ valid: false });
+ return    res.send("Error");
   }
 }
 
@@ -18,9 +18,9 @@ const addToMessageHistory = async(req, res) => {
   try{
     const message = new Message({username: req.body.username, message:req.body.message})
     await message.save()
-  return res.send(message)
+ return res.send(message)
   }catch(e){
-    return res.status(500).send({ valid: false });
+    return res.send("Error");
   }
 }
 
@@ -30,9 +30,9 @@ const addToMessageHistory = async(req, res) => {
 const clearMessages = async(req, res) => {
   try{
     await Message.deleteMany()
-		return res.send("Messages deleted")
+return res.send("Messages deleted")
   }catch(e){
-  return  res.status(500).send({ valid: false });
+  return res.send("Error");
   }
 }
 

@@ -31,7 +31,9 @@ module.exports.createUser = async (req, res) => {
 //Login
 module.exports.Login = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
+    const user = await User.findOne({ username: req.body.username });
+    
+     
     if (user === null) {
         return res.status(403).send("User not found");
     }
