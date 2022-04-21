@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
-import { login, logout } from "./store/user.reducer";
+import { login, logout, createUser } from "./store/user.reducer";
 
 import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
@@ -53,7 +53,7 @@ function App() {
     console.log("handleSingIn");
     console.log("values: ", values);
     setSubmitting(true);
-    //dispatch(createUser(user,message))
+    dispatch(createUser(values));
     setSubmitting(false);
   };
 

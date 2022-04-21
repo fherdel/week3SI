@@ -12,14 +12,17 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
-const messagesService = require("./services/messages.service");
-const { getUsers } = require("./services/users.service");
+const { getMessagesHistory, addToMessageHistory, clearMessages} = require("./services/messages.service");
+const { getUsers, login, createUser } = require("./services/users.service");
+const { response } = require("express");
 
 let connectionCount = 0;
 let connectedUsers = 0;
 
 // Middlewares
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: '*' }));
 // Templating engine setup
 
@@ -27,34 +30,64 @@ app.set("view engine", "ejs");
 
 // Enpoints
 app.get('/users', async (req,res)=>{
-  const users = await getUsers()
+  const users = await getUsers();
   res.json(users);
 })
-
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
-  res.json(messages);
-});
 
 /**
  * implement data on mongo
  */
 app.post('/users', async (req,res)=>{
-  console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
-})
-
-app.delete("/messages", (req, res) => {
-  messagesService.clearMessages();
-  io.emit("clearMessages");
-  res.status(200).send();
+  try {
+    const user = await createUser(req.body);
+    res.status(200).send(user);
+  } catch(error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
 });
 
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
+app.post('/login', async (request,response)=>{
+  try {
+    const user = await login(request.body);
+    response.status(200).send(user);
+  } catch(error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
 })
 
+app.get("/messages", async (req, res) => {
+  try {
+    const messages = await getMessagesHistory(res);
+    console.log(messages);
+    response.json(messages);
+  } catch(error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
+});
 
+app.post('/messages', async (request, response) => {
+  try {
+    const message = await addToMessageHistory(request.body, response);
+    response.status(200).send(message);
+  } catch(error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
+});
+
+app.delete("/messages", async (req, res) => {
+  try {
+    const message = await clearMessages(res);
+    io.emit("clearMessages");
+    res.status(200).send(message);
+  } catch(error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
+});
 
 /**
  * implement data on mongo

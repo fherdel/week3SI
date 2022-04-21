@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const url = 'http://localhost:3001';
 // Slice
 
 // const initialUser = localStorage.getItem('user')
@@ -37,7 +38,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://localhost:3001/login", {
+      let data = await axios.post(`${url}/login`, {
         username,
         password,
       });
@@ -48,6 +49,18 @@ export const login =
       return console.error(e.message);
     }
   };
+
+  export const createUser = ({ username, password }) => 
+    async (dispatch) => {
+      try {
+        let data = await axios.post(`${url}/users`, { username, password });
+        console.log(data.data);
+        dispatch(loginSuccess( { username, password } ));
+      } catch(error) {
+        console.log('error', error);
+        return console.error(error.message);
+      }
+    };
 
 /**
  * agregue aca la logica para desloguear usuario
