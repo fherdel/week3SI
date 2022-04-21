@@ -5,11 +5,11 @@ import axios from "axios";
 const slice = createSlice({
   name: "messages",
   initialState: {
-    messages: [{ nombre: "juan", mensaje: "holi", _id: "1" }],
+    messages: [],
   },
   reducers: {
     pushMessage: (state, action) => {
-    console.log('action: ', action);
+      console.log("action: ", action);
       state.messages = [...state.messages, action.payload];
     },
     setMessages: (state, action) => {
@@ -25,10 +25,13 @@ export default slice.reducer;
 const { pushMessage, setMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
+  console.log("user: ", username);
+  console.log("message: ", message);
   try {
-    // await api.post('/message/', { user, message })
+    let data = await axios.post("http://localhost:3001/messages",  {
+      username,
+      message,
+    });
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
@@ -40,9 +43,15 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
-    console.log("data: ", data);
-    dispatch(setMessages(data));
+    let data = await axios.get("http://localhost:3001/messages");
+
+    if (!data.data.error) {
+      console.log("data: ", data);
+      dispatch(setMessages(data.data));
+    } else {
+      console.log("err bd: ", data.data.error);
+      return alert(data.data.error);
+    }
   } catch (e) {
     console.log("e: ", e);
     return console.error(e.message);

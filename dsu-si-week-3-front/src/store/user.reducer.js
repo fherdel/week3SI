@@ -15,11 +15,12 @@ const slice = createSlice({
   reducers: {
     loginSuccess: (state, action) => {
       state.user = action.payload;
-      //localStorage.setItem('user', JSON.stringify(action.payload))
+      console.log(action.payload);
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     logoutSuccess: (state, action) => {
       state.user = null;
-      //localStorage.removeItem('user')
+      localStorage.removeItem("user");
     },
   },
 });
@@ -37,12 +38,40 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://192.168.1.10:3001/login", {
+      let data = await axios.post("http://localhost:3001/login", {
         username,
         password,
       });
-      console.log("data: ", data);
-      dispatch(loginSuccess());
+
+      if (!data.data.error) {
+        console.log("data: ", data);
+        dispatch(loginSuccess({ username, password }));
+      } else {
+        console.log("err bd: ", data.data.error);
+        return alert(data.data.error);
+      }
+    } catch (e) {
+      console.log("e: ", e);
+      return console.error(e.message);
+    }
+  };
+
+export const createUser =
+  ({ username, password }) =>
+  async (dispatch) => {
+    try {
+      let data = await axios.post("http://localhost:3001/users", {
+        username,
+        password,
+      });
+
+      if (!data.data.error) {
+        console.log("data: ", data);
+        dispatch(loginSuccess({ username, password }));
+      } else {
+        console.log("err bd: ", data.data.error);
+        return alert(data.data.error);
+      }
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);
