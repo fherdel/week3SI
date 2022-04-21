@@ -13,11 +13,11 @@ const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
-const { getUsers } = require("./services/users.service");
-
+const { getUsers, createUser, loginTry } = require("./services/users.service");  //metodos...............................
+var bodyParser = require('body-parser');
 let connectionCount = 0;
 let connectedUsers = 0;
-
+app.use(bodyParser.json());
 // Middlewares
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: '*' }));
@@ -31,27 +31,29 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
+app.get("/messages", async (req, res) => {
+  const messages= await messagesService.getMessagesHistory()
   res.json(messages);
 });
 
 /**
  * implement data on mongo
  */
+//endpoint para la creacion del neuvo usuario
 app.post('/users', async (req,res)=>{
-  console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
+  const newusers = await createUser(req.body)
+  res.json(newusers);
 })
-
-app.delete("/messages", (req, res) => {
+app.delete("/messages", async (req, res) => {
+  console.log('eliminar todo llegue ')
   messagesService.clearMessages();
-  io.emit("clearMessages");
-  res.status(200).send();
+  io.emit("clearMessages"); 
+  res.status(200).send({message:"all deleted"});
 });
-
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
+//endpoint para realizar el login, devuelve username false si este no se llevo acabo correctamente
+app.post('/login', async (req,res)=>{
+  const status = await loginTry(req.body)
+  res.json(status);
 })
 
 

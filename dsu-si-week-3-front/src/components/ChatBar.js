@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 export default function ChatBar({ emitMessage }) {
   const { user } = useSelector((state) => state.user);
   const [message, setMessage] = useState("");
-  console.log('message: ', message);
-
   const sendMessage = () => {
     console.log(user, message);
     emitMessage(
@@ -28,7 +26,7 @@ export default function ChatBar({ emitMessage }) {
           onChange={(e,x) => {
             setMessage(e.target.value)}}
         />
-        <button onClick={sendMessage} disabled={false /* !user */}>
+        <button onClick={sendMessage} disabled={!user}>
           Submit
         </button>
       </span>

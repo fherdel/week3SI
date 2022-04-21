@@ -11,10 +11,16 @@ const slice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    id:null
   },
   reducers: {
-    loginSuccess: (state, action) => {
+    signUpSuccess: (state, action) => {
       state.user = action.payload;
+      //localStorage.setItem('user', JSON.stringify(action.payload))
+    },
+    loginSuccess: (state, action) => {
+      state.user = action.payload.username;      
+      state.id = action.payload._id;
       //localStorage.setItem('user', JSON.stringify(action.payload))
     },
     logoutSuccess: (state, action) => {
@@ -28,7 +34,26 @@ export default slice.reducer;
 
 // Actions
 
-const { loginSuccess, logoutSuccess } = slice.actions;
+const { loginSuccess, logoutSuccess, signUpSuccess } = slice.actions;
+/**
+ * agregue aca la logica para agregar los usuarios
+ */
+ export const signup =
+ ({ username, password }) =>
+ async (dispatch) => {
+   try {
+     let data = await axios.post("http://localhost:3001/users", {
+       username,
+       password,
+     });
+     console.log("data: desde signup", data);
+     dispatch(signUpSuccess());
+     return true
+   } catch (e) {
+     console.log("e: ", e);
+     return console.error(e.message);
+   }
+ };
 
 /**
  * agregue aca la logica para incrustar los usuarios
@@ -41,8 +66,13 @@ export const login =
         username,
         password,
       });
-      console.log("data: ", data);
-      dispatch(loginSuccess());
+      if (data.data.username!==false) {
+        console.log("data: desde login", data.data);
+        dispatch(loginSuccess(data.data));
+        return true
+      } else {
+        console.log(false)
+      }
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);

@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
-import { login, logout } from "./store/user.reducer";
+import { login, logout, signup } from "./store/user.reducer";
 
-import { getMessages, addMessage } from "./store/messages.reducer";
+import { getMessages, addMessage, deleteAll } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
@@ -12,6 +12,7 @@ import ChatBar from "./components/ChatBar";
 const ENDPOINT = "http://localhost:3001";
 let socket;
 function App() {
+  const [status, setStatus]=useState(false)
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
@@ -24,36 +25,31 @@ function App() {
     });
 
     socket.on("clearMessages", (x) => {
-      console.log("clear messages: ", x);
+      console.log("clear messages: ",x);
+      //handleReset()   
     });
   }, []);
-
-  if (user) {
-    return (
-      <div>
-        {user.username}
-        <button onClick={() => dispatch(logout())}>Logout</button>
-      </div>
-    );
-  }
-
-
   const emitMessage = (username, message) => {
     socket.emit("chatMessageEmitted", {
       username,
       message,
     });
-    dispatch(addMessage( "My self", message ))
+    dispatch(addMessage( user, message ))
   };
-
-  /**
-   * add logic to create users
-   */
-  const handleSingIn = async (values, setSubmitting) => {
-    console.log("handleSingIn");
-    console.log("values: ", values);
+  //deslogearese
+  const handelLogOut = async () => {
+    setStatus(false)
+    dispatch(logout())   
+  };
+  //eliminar todos los mensajes
+  const handleReset = async () => {
+    dispatch(deleteAll())   
+  };
+  //handle for signup
+  const handleSignUp = async (values, setSubmitting) => {
     setSubmitting(true);
-    //dispatch(createUser(user,message))
+    const response=await dispatch(signup(values))
+    console.log(response)
     setSubmitting(false);
   };
 
@@ -61,13 +57,12 @@ function App() {
 
   return (
     <div>
-      <div style={{ margin: "20px" }}>
+      <div style={{ margin: "20px" }} hidden={status} >
         <Formik
           initialValues={{ username: "", password: "" }}
           onSubmit={async (values, { setSubmitting }) => {
-            console.log("submiting");
             setSubmitting(true);
-            await dispatch(login(values));
+            setStatus(await dispatch(login(values)));
             setSubmitting(false);
           }}
           validate={(values) => {
@@ -82,13 +77,19 @@ function App() {
         >
           {({ isSubmitting, values, setSubmitting }) => (
             <Form>
-              <Field type="text" name="username" />
-              <Field type="password" name="password" />
-              <button type="submit" disabled={isSubmitting}>
+              <h1>Welcome</h1>
+              <p>Sign in or sign up please!</p>
+              <Field type="text" name="username" id="name" style={{ marginLeft: "20px" }}/>
+              <Field type="password" name="password" id="pass" style={{ marginLeft: "20px" }}/>
+              <button type="submit" disabled={isSubmitting}
+              style={{ marginLeft: "20px" }}
+              >
                 Login
               </button>
               <button
-                onClick={() => handleSingIn(values, setSubmitting)}
+              style={{ marginLeft: "20px" }}
+              type="button"
+                onClick={() => handleSignUp(values, setSubmitting)}
                 disabled={isSubmitting}
               >
                 Sing in
@@ -97,8 +98,15 @@ function App() {
           )}
         </Formik>
       </div>
+      <div style={{ margin: "20px" }} hidden={!status} >
+      {user!==null&&'Usuario: '+user}
+        <button onClick={() => handelLogOut()} style={{ marginLeft: "20px" }}>Logout</button>
+        <button onClick={() => handleReset()} style={{ marginLeft: "40px" }}>Borrar todos los mensajes</button>
+      </div>
+      <div hidden={(user===null)}>
       <Messages  />
       <ChatBar emitMessage={emitMessage}/>
+      </div>
     </div>
   );
 }

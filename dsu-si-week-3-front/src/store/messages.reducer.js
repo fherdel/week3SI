@@ -15,6 +15,9 @@ const slice = createSlice({
     setMessages: (state, action) => {
       state.messages = action.payload.data;
     },
+    deleteAllMessages: (state, action) => {
+      state.messages = [{username:"Admin", message:"Sin mensajes aun"}];
+    },
   },
 });
 
@@ -22,22 +25,17 @@ export default slice.reducer;
 
 // Actions
 
-const { pushMessage, setMessages } = slice.actions;
+const { pushMessage, setMessages, deleteAllMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
   try {
-    // await api.post('/message/', { user, message })
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
   }
 };
 
-/**
- * agregue aca la logica para incrustar los usuarios
- */
+//obtener todos los mensajes
 export const getMessages = () => async (dispatch) => {
   try {
     let data = await axios.get("http://localhost:3001/messages");
@@ -48,3 +46,14 @@ export const getMessages = () => async (dispatch) => {
     return console.error(e.message);
   }
 };
+
+//eliminar todos los mensajes
+export const deleteAll = () => async (dispatch) => {
+    try {
+      let data = await axios.delete("http://localhost:3001/messages");
+      console.log(data)
+      dispatch(deleteAllMessages());
+    } catch (e) {
+      return console.error(e.message);
+    }
+  };
