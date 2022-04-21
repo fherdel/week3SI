@@ -16,6 +16,7 @@ module.exports.getUsers = async (req, res) => {
  * add here post for users
  */
 module.exports.createUser = async (req, res) => {
+
   try {
     const user = new User({
       username: req.body.username,
@@ -30,8 +31,9 @@ module.exports.createUser = async (req, res) => {
 
 //Login
 module.exports.Login = async (req, res) => {
+console.log(req.body)
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username }); 
     
      
     if (user === null) {

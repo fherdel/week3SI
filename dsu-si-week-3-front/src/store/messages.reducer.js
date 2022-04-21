@@ -30,16 +30,16 @@ export const addMessage = (username, message) => async (dispatch) => {
   try {
     await axios
       .post("http://localhost:3001/messages", {
-        username: username,
+        username: username.username,
         message: message,
       })
       .then((response) => {
         console.log(response);
-       dispatch(pushMessage({ message, username }));
+ dispatch(pushMessage({ message:message, username:username.username }));
       })
       .catch((err) => console.log(err));
 
-
+   
   } catch (e) {
     return console.error(e);
   }
