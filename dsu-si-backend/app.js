@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require('cors');
 const app = express();
 var morgan = require('morgan');
+const jwt = require('jsonwebtoken');
 const server = require("http").createServer(app);
 const credentials = require('./config/config');
 const { Server } = require("socket.io");
@@ -28,6 +29,42 @@ app.use(morgan('dev'));
 // Templating engine setup
 
 app.set("view engine", "ejs");
+/**JWT */
+function generateAccessToken(username) {
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
+
+app.post('/api/createNewUser', (req, res) => {
+  // ...
+
+  const token = generateAccessToken({ username: req.body.username });
+  res.json(token);
+
+  // ...
+});
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.TOKEN_SECRET , (err, user) => {
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
+}
+
+app.get('/api/userOrders', authenticateToken, (req, res) => {
+  // executes after authenticateToken
+  res.json({authorized: true})
+  // ...
+})
 
 // Enpoints
 app.get('/users', async (req,res)=>{
@@ -35,7 +72,7 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", async (req, res) => {
+app.get("/messages", authenticateToken, async (req, res) => {
   const messages = await messagesService.getMessagesHistory()
   res.json(messages);
 });
@@ -50,7 +87,7 @@ app.post('/users', async (req,res)=>{
   res.status(200).json({newUser})
 })
 
-app.delete("/messages", (req, res) => {
+app.delete("/messages",authenticateToken ,(req, res) => {
   messagesService.clearMessages();
   io.emit("clearMessages");
   res.status(200).send();
@@ -59,8 +96,10 @@ app.delete("/messages", (req, res) => {
 app.post('/login', async (req,res)=>{
   const {username,password} = req.body;
   const newUser = await getUser(username,password);
+  const token = generateAccessToken({ username: req.body.username });
+  const userData = {...newUser[0]._doc,token} 
   if (newUser.length === 1) {
-    res.status(200).json({data: newUser[0], error:false, msj:"user found"})
+    res.status(200).json({data: userData, error:false, msj:"user found"})
   } else {
     res.status(404).json({data: {}, error:true, msj:"user not found"})
   }

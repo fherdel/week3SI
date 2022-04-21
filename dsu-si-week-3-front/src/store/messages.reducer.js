@@ -40,9 +40,9 @@ console.log('message: ', message);
 /**
  * agregue aca la logica para incrustar los usuarios
  */
-export const getMessages = () => async (dispatch) => {
+export const getMessages = (token) => async (dispatch) => {
   try {
-    let data = await axios.get(`${ENDPOINT}/messages`);
+    let data = await axios.get(`${ENDPOINT}/messages`,{ headers: {"Authorization" : `Bearer ${token}`} });
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {

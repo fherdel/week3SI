@@ -17,7 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    dispatch(getMessages());
+    
     socket = socketIOClient(ENDPOINT.BACKEND);
     console.log("socket: ", socket);
 
@@ -49,6 +49,7 @@ function App() {
     console.log("values: ", values);
     setSubmitting(true);
     //dispatch(createUser(user,message))
+    
     SetIsSingIn(true)
     setSubmitting(false);
   };

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import config from '../config/config';
+import { getMessages, addMessage } from "./messages.reducer";
 // Slice
 
 // const initialUser = localStorage.getItem('user')
@@ -44,6 +45,7 @@ const { loginSuccess, logoutSuccess,getCurrent } = slice.actions;
        password,
      });
      console.log(data)
+     
    } catch (e) {
      console.log("e: ", e);
      return console.error(e.message);
@@ -60,6 +62,7 @@ export const login =
       });
       
       console.log("data: ",  data.data.data);
+      dispatch(getMessages(data.data.data.token));
       dispatch(loginSuccess(data.data.data));
     } catch (e) {
       console.log("e: ", e);
