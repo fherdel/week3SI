@@ -22,6 +22,7 @@ const slice = createSlice({
       state.user = null;
       //localStorage.removeItem('user')
     },
+    getCurrent: (state) => state,
   },
 });
 
@@ -29,11 +30,26 @@ export default slice.reducer;
 
 // Actions
 
-const { loginSuccess, logoutSuccess } = slice.actions;
+const { loginSuccess, logoutSuccess,getCurrent } = slice.actions;
 
 /**
  * agregue aca la logica para incrustar los usuarios
  */
+ export const singin =
+ ({ username, password }) =>
+ async (dispatch) => {
+   try {
+     let data = await axios.post(`${ENDPOINT}/users`, {
+       username,
+       password,
+     });
+     console.log(data)
+   } catch (e) {
+     console.log("e: ", e);
+     return console.error(e.message);
+   }
+ };
+
 export const login =
   ({ username, password }) =>
   async (dispatch) => {
@@ -42,8 +58,9 @@ export const login =
         username,
         password,
       });
-      console.log("data: ", data);
-      dispatch(loginSuccess());
+      
+      console.log("data: ",  data.data.data);
+      dispatch(loginSuccess(data.data.data));
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);

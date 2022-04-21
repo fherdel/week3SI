@@ -17,7 +17,17 @@ module.exports.getUsers = async (req, res) => {
 /**
  * add here post for users
  */
- module.exports.createUser = async (values)=>{
-    console.log('values: ', values);
-    return ":( no logic added yet"
+module.exports.createUser = async (username,password)=>{
+    console.log('values: ', username,password);
+    const newUser = new User({
+        username,
+	    password,
+    })
+    const result = await newUser.save();
+    return result
+}
+
+module.exports.getUser = async (username,password)=>{
+    const user = User.find({ username},{password:0,__v:0});
+    return user;
 }

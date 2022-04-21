@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
+var morgan = require('morgan');
 const server = require("http").createServer(app);
 const credentials = require('./config/config');
 const { Server } = require("socket.io");
@@ -14,7 +15,7 @@ const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
-const { getUsers } = require("./services/users.service");
+const { getUsers,createUser,getUser } = require("./services/users.service");
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -22,6 +23,8 @@ let connectedUsers = 0;
 // Middlewares
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: '*' }));
+app.use(express.json({ limit: '50mb', extended: true }));
+app.use(morgan('dev'));
 // Templating engine setup
 
 app.set("view engine", "ejs");
@@ -32,8 +35,8 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
+app.get("/messages", async (req, res) => {
+  const messages = await messagesService.getMessagesHistory()
   res.json(messages);
 });
 
@@ -42,7 +45,9 @@ app.get("/messages", (req, res) => {
  */
 app.post('/users', async (req,res)=>{
   console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
+  const {username,password} = req.body;
+  const newUser = await createUser(username,password);
+  res.status(200).json({newUser})
 })
 
 app.delete("/messages", (req, res) => {
@@ -51,8 +56,14 @@ app.delete("/messages", (req, res) => {
   res.status(200).send();
 });
 
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
+app.post('/login', async (req,res)=>{
+  const {username,password} = req.body;
+  const newUser = await getUser(username,password);
+  if (newUser.length === 1) {
+    res.status(200).json({data: newUser[0], error:false, msj:"user found"})
+  } else {
+    res.status(404).json({data: {}, error:true, msj:"user not found"})
+  }
 })
 
 
@@ -64,8 +75,9 @@ io.on("connection", (socket) => {
   connectionCount += 1;
   connectedUsers += 1;
 
-  socket.on("chatMessageEmitted", ( {username, message} ) => {
-    messagesService.addToMessageHistory( username, message );
+  socket.on("chatMessageEmitted", async ( {username, message} ) => {
+    const delta = await messagesService.addToMessageHistory( username, message );
+    console.log(delta)
     socket.broadcast.emit("chatMessageEmitted", { username, message });
   });
 });

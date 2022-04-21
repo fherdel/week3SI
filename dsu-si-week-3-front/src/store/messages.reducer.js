@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import config from '../config/config';
+const ENDPOINT = config.BACKEND;
 // Slice
 
 const slice = createSlice({
@@ -40,7 +42,7 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
+    let data = await axios.get(`${ENDPOINT}/messages`);
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {

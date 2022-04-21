@@ -10,14 +10,14 @@ import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 import config from './config/config';
 
-const ENDPOINT = config.BACKEND;
+const ENDPOINT = config;
 let socket;
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
     dispatch(getMessages());
-    socket = socketIOClient(ENDPOINT);
+    socket = socketIOClient(ENDPOINT.BACKEND);
     console.log("socket: ", socket);
 
     socket.on("chatMessageEmitted", ({ username, message }) => {
@@ -29,14 +29,7 @@ function App() {
     });
   }, []);
 
-  if (user) {
-    return (
-      <div>
-        {user.username}
-        <button onClick={() => dispatch(logout())}>Logout</button>
-      </div>
-    );
-  }
+  
 
 
   const emitMessage = (username, message) => {
@@ -44,7 +37,7 @@ function App() {
       username,
       message,
     });
-    dispatch(addMessage( "My self", message ))
+    dispatch(addMessage( username, message ))
   };
 
   /**
@@ -59,6 +52,17 @@ function App() {
   };
 
   // socket events
+
+  if (user) {
+    return (
+      <div>
+        {user.username}
+        <button onClick={() => dispatch(logout())}>Logout</button>
+        <Messages  />
+      <ChatBar emitMessage={emitMessage}/>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -98,8 +102,7 @@ function App() {
           )}
         </Formik>
       </div>
-      <Messages  />
-      <ChatBar emitMessage={emitMessage}/>
+      
     </div>
   );
 }
