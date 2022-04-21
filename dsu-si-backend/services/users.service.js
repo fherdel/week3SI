@@ -2,7 +2,7 @@
 const User=require("../schemas/user.schema")
 
 // Get all users
-module.exports.getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
 	try {
         const users = await User.find()
         	console.log('users: ', users);
@@ -17,7 +17,23 @@ module.exports.getUsers = async (req, res) => {
 /**
  * add here post for users
  */
- module.exports.createUser = async (values)=>{
-    console.log('values: ', values);
-    return ":( no logic added yet"
+ const createUser = async (values)=>{
+     try {
+        const user = await User(values).save()
+        return {message:null, data:user} 
+     } catch (error) {
+         console.error(error.message)
+         return {message:error,data:null}
+     }
 }
+
+const login = async (values) => {
+    try {
+        const user = await User.findOne({username:values.username})
+        return {message:null,data:user}
+    } catch (error) {
+        return {message:error,data:null}
+    }
+}
+ 
+module.exports={getUsers,createUser,login}

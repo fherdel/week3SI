@@ -15,7 +15,11 @@ const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
-const { getUsers } = require("./services/users.service");
+const userService = require("./services/users.service");
+
+app.use(express.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -29,7 +33,7 @@ app.use(cors({ origin: '*' }));
 
 // Enpoints
 app.get('/users', async (req,res)=>{
-  const users = await getUsers()
+  const users = await userService.getUsers() 
   res.json(users);
 })
 
@@ -44,8 +48,12 @@ app.get("/messages", async (req, res) => {
 /**
  * implement data on mongo
  */
-app.post('/users', async (req,res)=>{
-  
+app.post('/user', async (req,res)=>{
+  const user = await userService.createUser(req.body)
+  if(user.message){
+    return  res.status(500).json(user)
+  }
+  res.status(200).json(user)
 })
 
 app.delete("/messages", (req, res) => {
@@ -54,8 +62,19 @@ app.delete("/messages", (req, res) => {
   res.status(200).send();
 });
 
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
+
+app.post('/message',(req,res)=>{
+  console.log(req.body)
+  messagesService.addToMessageHistory(req.body.username,req.body.message)
+  res.status(200).json({message:null,data:req.body})
+})
+
+app.post('/login', async (req,res)=>{
+  const user = await userService.login(req.body)
+  if(user.message){
+    return res.status(500).json(error)
+  }
+  res.status(200).json(user)
 })
 
 
