@@ -28,6 +28,6 @@ module.exports.createUser = async (username,password)=>{
 }
 
 module.exports.getUser = async (username,password)=>{
-    const user = User.find({ username},{password:0,__v:0});
+    const user = User.find({ username,password},{password:0,__v:0});
     return user;
 }
