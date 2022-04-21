@@ -61,7 +61,7 @@ app.get("/messages", async (req, res) => {
   try {
     const messages = await getMessagesHistory(res);
     console.log(messages);
-    response.json(messages);
+    res.status(200).json(messages);
   } catch(error) {
     console.log(error);
     response.status(500).send(error);

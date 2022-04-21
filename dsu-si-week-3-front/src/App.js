@@ -43,7 +43,7 @@ function App() {
       username,
       message,
     });
-    dispatch(addMessage( "My self", message ))
+    dispatch(addMessage( username, message ));
   };
 
   /**

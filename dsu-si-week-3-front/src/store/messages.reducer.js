@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+const url = 'http://localhost:3001/messages';
 // Slice
 
 const slice = createSlice({
   name: "messages",
   initialState: {
-    messages: [{ nombre: "juan", mensaje: "holi", _id: "1" }],
+    messages: [ { nombre: 'juan', mensaje: 'holi', _id: '1' } ],
   },
   reducers: {
     pushMessage: (state, action) => {
@@ -28,7 +29,7 @@ export const addMessage = (username, message) => async (dispatch) => {
 console.log('user: ', username);
 console.log('message: ', message);
   try {
-    // await api.post('/message/', { user, message })
+    let data = await axios.post(url, { username, message })
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
@@ -40,9 +41,12 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
-    console.log("data: ", data);
-    dispatch(setMessages(data));
+    let data = await axios.get(url);
+    if(!data.data.error) {
+      console.log("data: ", data.data);
+      dispatch(setMessages(data));
+
+    }
   } catch (e) {
     console.log("e: ", e);
     return console.error(e.message);
