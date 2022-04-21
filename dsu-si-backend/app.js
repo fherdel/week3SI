@@ -14,7 +14,8 @@ const swaggerDocument = require('./swagger.json');
 
 const mongoose = require('mongoose');
 const messagesService = require('./services/messages.service');
-const { getUsers } = require('./services/users.service');
+const { getUsers, createUser, getSingleUser } = require('./services/users.service');
+const { readSync } = require('fs');
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -22,6 +23,8 @@ let connectedUsers = 0;
 // Middlewares
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: '*' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 // Templating engine setup
 
 app.set('view engine', 'ejs');
@@ -32,8 +35,8 @@ app.get('/users', async (req, res) => {
 	res.json(users);
 });
 
-app.get('/messages', (req, res) => {
-	const messages = messagesService.getMessagesHistory();
+app.get('/messages', async (req, res) => {
+	const messages = await messagesService.getMessagesHistory();
 	res.json(messages);
 });
 
@@ -41,8 +44,9 @@ app.get('/messages', (req, res) => {
  * implement data on mongo
  */
 app.post('/users', async (req, res) => {
-	console.log('>>>>>>>>>> post user');
-	res.status(200).send('logic not implemented yet :c');
+	const { username, password } = req.body;
+	const pre = await createUser(username, password);
+	res.status(200).send(pre);
 });
 
 app.delete('/messages', (req, res) => {
@@ -51,8 +55,14 @@ app.delete('/messages', (req, res) => {
 	res.status(200).send();
 });
 
-app.post('/login', (req, res) => {
-	res.status(200).send("not implemented yet :'c");
+app.post('/login', async (req, res) => {
+	const { username, password } = req.body;
+	const tempo = await getSingleUser(username, password);
+	if (tempo !== null) {
+		res.status(200).send({ user: tempo.username });
+	} else {
+		res.status(404).send({ user: null });
+	}
 });
 
 /**
