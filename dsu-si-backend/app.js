@@ -11,6 +11,8 @@ const io = new Server(server,  {
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
+
+
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
 const { getUsers } = require("./services/users.service");
@@ -23,7 +25,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: '*' }));
 // Templating engine setup
 
-app.set("view engine", "ejs");
+//app.set("view engine", "ejs");
 
 // Enpoints
 app.get('/users', async (req,res)=>{
@@ -31,17 +33,19 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
-  res.json(messages);
+app.get("/messages", async (req, res) => {
+  const messages = await messagesService.getMessagesHistory()
+  if(messages.error){
+    res.status(500).json(messages)
+  }
+  res.status(200).json(messages);
 });
 
 /**
  * implement data on mongo
  */
 app.post('/users', async (req,res)=>{
-  console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
+  
 })
 
 app.delete("/messages", (req, res) => {
