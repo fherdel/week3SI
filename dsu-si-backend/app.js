@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
   connectedUsers += 1;
 
   socket.on("chatMessageEmitted", ( {username, message} ) => {
-    messagesService.addToMessageHistory( username, message );
+    addToMessageHistory( username, message );
     socket.broadcast.emit("chatMessageEmitted", { username, message });
   });
 });

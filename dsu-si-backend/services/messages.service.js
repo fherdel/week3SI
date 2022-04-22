@@ -16,13 +16,16 @@ module.exports.getMessagesHistory = async (response) => {
 /**
  * add here messages to mongo messages collection
  */
-module.exports.addToMessageHistory = async ( values, response ) => {
+module.exports.addToMessageHistory = async ( values ) => {
   try {
-    const message = await Message(values).save();
+    console.log(values);
+    let { user, message } = values;
+    let { username } = user;
+    const value = await Message({username, message}).save();
     return {message: 'success adding a new message'};
   } catch(error) {
     console.log('error', error);
-    response.status(500).send( { error } );
+    return error;
   } 
 }
 

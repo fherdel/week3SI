@@ -25,12 +25,11 @@ export default slice.reducer;
 
 const { pushMessage, setMessages } = slice.actions;
 
-export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
+export const addMessage = (user, message) => async (dispatch) => {
+let { username } = user;
   try {
-    let data = await axios.post(url, { username, message })
-    dispatch(pushMessage({ message, username }));
+    let data = await axios.post(url, { user, message })
+    if(!data.data.error) dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
   }

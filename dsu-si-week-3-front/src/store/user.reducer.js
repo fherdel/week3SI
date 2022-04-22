@@ -16,11 +16,11 @@ const slice = createSlice({
   reducers: {
     loginSuccess: (state, action) => {
       state.user = action.payload;
-      //localStorage.setItem('user', JSON.stringify(action.payload))
+      localStorage.setItem('user', JSON.stringify(action.payload))
     },
     logoutSuccess: (state, action) => {
       state.user = null;
-      //localStorage.removeItem('user')
+      localStorage.removeItem('user')
     },
   },
 });
@@ -43,7 +43,7 @@ export const login =
         password,
       });
       console.log("data: ", data);
-      dispatch(loginSuccess());
+      dispatch(loginSuccess({username, password}));
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);
