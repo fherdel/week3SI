@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
+const jwt = require('jsonwebtoken');
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server,  { 
@@ -10,6 +11,10 @@ const io = new Server(server,  {
   }});
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+
+const {generateAccessToken , authenticateToken} = require('./jwt/helpers')
+const dotenv = require('dotenv');
+dotenv.config();
 
 
 
@@ -37,7 +42,7 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", async (req, res) => {
+app.get("/messages", authenticateToken,async (req, res) => {
   const messages = await messagesService.getMessagesHistory()
   if(messages.error){
     res.status(500).json(messages)
@@ -63,7 +68,7 @@ app.delete("/messages", (req, res) => {
 });
 
 
-app.post('/message',(req,res)=>{
+app.post('/message',authenticateToken,(req,res)=>{
   console.log(req.body)
   messagesService.addToMessageHistory(req.body.username,req.body.message)
   res.status(200).json({message:null,data:req.body})
@@ -74,7 +79,9 @@ app.post('/login', async (req,res)=>{
   if(user.message){
     return res.status(500).json(error)
   }
-  res.status(200).json(user)
+  const token = generateAccessToken({ username: user });
+  console.log("tken",token,user)
+  res.status(200).json({user,token})
 })
 
 
