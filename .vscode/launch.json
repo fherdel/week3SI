@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/dsu-si-week-3-front/package.json",
+                "localRoot": "${workspaceFolder}/dsu-si-week-3-front"
+            }
+        }
+    ]
+}

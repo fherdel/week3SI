@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const dot = require('dotenv').config();
 const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
@@ -85,7 +86,7 @@ io.on('connection', (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect('mongodb://localhost:27017/admin', { useNewUrlParser: true })
+	.connect(`mongodb://${process.env.IP_POINT}:27017/admin`, { useNewUrlParser: true })
 	.then(() => {
 		// Starting server.
 		server.listen(3001, () => {
