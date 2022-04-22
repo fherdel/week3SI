@@ -20,6 +20,9 @@ function App() {
     dispatch(getMessages());
     socket = socketIOClient(ENDPOINT);
     console.log("socket: ", socket);
+    if(localStorage.getItem('user')){
+      localStorage.removeItem('user')
+    }
 
     socket.on("chatMessageEmitted", ({ username, message }) => {
       console.log('init chat emitted',username, message)
@@ -61,7 +64,7 @@ function App() {
         <Formik
           initialValues={{ username: "", password: "" }}
           onSubmit={async (values, { setSubmitting }) => {
-            console.log("submiting");
+            //console.log("submiting");
             setSubmitting(true);
             await dispatch(login(values));
             setSubmitting(false);

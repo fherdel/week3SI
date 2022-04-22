@@ -5,7 +5,7 @@ import axios from "axios";
 const slice = createSlice({
   name: "messages",
   initialState: {
-    messages: [{ nombre: "juan", mensaje: "holi", _id: "1" }],
+    messages: [],
   },
   reducers: {
     pushMessage: (state, action) => {
@@ -25,14 +25,21 @@ export default slice.reducer;
 const { pushMessage, setMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
+  console.log('user: ', username);
+  console.log('message: ', message);
   try {
-    await axios.post('http://localhost:3001/message', { username, message })
+    const userToken = JSON.parse(localStorage.getItem('user'))
+    console.log("token",userToken)  
+    await axios.post('http://localhost:3001/message', { username, message },{
+      headers:{
+        "Authorization" : `Bearer ${userToken.token}`
+      }
+    })
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
   }
+
 };
 
 /**
@@ -40,7 +47,12 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://localhost:3001/messages");
+    const userToken = JSON.parse(localStorage.getItem('user'))
+    let data = await axios.get("http://localhost:3001/messages",{
+      headers:{
+        "Authorization" : `Bearer ${userToken.token}`
+      }
+    });
     console.log("data: Array ", data.data.data);
     dispatch(setMessages(data.data));
   } catch (e) {

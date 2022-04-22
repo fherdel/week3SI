@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+//import { useSelector } from "react-redux";
+
+
+
 
 
 
@@ -20,11 +24,11 @@ const slice = createSlice({
     loginSuccess: (state, action) => {
       console.log("Action payload",action.payload)
       state.user = action.payload;
-      //localStorage.setItem('user', JSON.stringify(action.payload))
+      localStorage.setItem('user', JSON.stringify(action.payload))
     },
     logoutSuccess: (state, action) => {
       state.user = null;
-      //localStorage.removeItem('user')
+      localStorage.removeItem('user')
     },
   },
 });
@@ -35,11 +39,12 @@ export default slice.reducer;
 
 const { loginSuccess, logoutSuccess } = slice.actions;
 
-
+//const { user } = useSelector((state) => state.user);
 
 export const createUser = (username, password) =>  async (dispatch) =>{
   try {
-    console.log(username,password)
+    const userToken = localStorage.getItem('user')
+    
     let data = await axios.post("http://localhost:3001/user",{
       username,
       password
@@ -66,10 +71,10 @@ export const login =
         username,
         password,
       });
-      console.log("data: ", data.data.data);
       const user = {
-        username: data.data.data.username,
-        password: data.data.data.password
+        username: data.data.user.data.username,
+        password: data.data.user.data.password,
+        token: data.data.token
       }
       console.log("user",user)
       dispatch(loginSuccess(user));
