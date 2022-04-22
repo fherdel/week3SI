@@ -1,19 +1,25 @@
-const messages = [{username:"mock", message:"data"}];
 
+const messagesModel = require('../schemas/message.schema') 
 /**
  * get here messages from mongo messages collection
  */
-const getMessagesHistory = () => messages;
-
+const getMessagesHistory = async() => {
+  const messages = await messagesModel.find();
+  console.log(messages)
+  return messages 
+}
 /**
  * add here messages to mongo messages collection
  */
-const addToMessageHistory = ( username, message ) =>
-  messages.push( {username, message} );
-
+const addToMessageHistory = ( username, message ) =>{
+  const newMessage = new messagesModel({username, message})
+  newMessage.save();
+}
 /**
  * delete messages from mongo messages collection
  */
-const clearMessages = () => (messages.length = 0);
+const clearMessages = async() => {
+  await messagesModel.deleteMany({})
+};
 
 module.exports = { getMessagesHistory, addToMessageHistory, clearMessages };

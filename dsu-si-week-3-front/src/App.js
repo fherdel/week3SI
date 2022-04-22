@@ -3,13 +3,13 @@ import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
 import { login, logout } from "./store/user.reducer";
-
+// import {signin} from "./store/user.reducer"
 import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 
-const ENDPOINT = "http://192.168.1.10:3001";
+const ENDPOINT = "http://localhost:3000";
 let socket;
 function App() {
   const dispatch = useDispatch();

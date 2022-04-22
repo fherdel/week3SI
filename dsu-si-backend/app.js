@@ -13,7 +13,7 @@ const swaggerDocument = require("./swagger.json");
 
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
-const { getUsers } = require("./services/users.service");
+const { getUsers, createUser, logIn } = require("./services/users.service");
 
 let connectionCount = 0;
 let connectedUsers = 0;
@@ -40,8 +40,18 @@ app.get("/messages", (req, res) => {
  * implement data on mongo
  */
 app.post('/users', async (req,res)=>{
-  console.log(">>>>>>>>>> post user")
-  res.status(200).send("logic not implemented yet :c")
+  try {
+    const user =  req.body.user;
+    const password = req.body.password;
+    const newUser = await createUser(user, password);
+    console.log(newUser)
+    res.status(200).send({
+      message: "new user created",
+      user
+    })
+  } catch (error) {
+    res.status(400).send({message: error})
+  }
 })
 
 app.delete("/messages", (req, res) => {
@@ -50,11 +60,20 @@ app.delete("/messages", (req, res) => {
   res.status(200).send();
 });
 
-app.post('/login', (req,res)=>{
-  res.status(200).send("not implemented yet :'c")
+app.post('/login', async(req,res)=>{
+  try {
+    const newUser = req.body.user;
+    const password = req.body.password;
+    const user = await logIn(newUser, password)
+    res.status(200).send({
+      message: "log in Successfully",
+      user
+    })
+    
+  } catch (error) {
+    res.status(400).send({message: error})
+  }
 })
-
-
 
 /**
  * implement data on mongo
@@ -71,7 +90,7 @@ io.on("connection", (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://192.168.1.10:27017/admin", { useNewUrlParser: true })
+	.connect("mongodb://localhost:27017/admin", { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.
