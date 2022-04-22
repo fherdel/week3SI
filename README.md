@@ -14,12 +14,14 @@ docker network create mysupernetwork
 
 docker run -d -p 27017:27017 --name dbmongo -v ~/mongo/data:/data/db --network mysupernetwork mongo
 
-docker run -d -p 3000:3000 --name mysql --network mysupernetwork racarlosdavid/dsu_frontend_chatapp
+docker run -d -p 3000:3000 --name dsu_backend_chatapp --network mysupernetwork  \
+    -e REACT_APP_BACKEND_URL=http://192.168.1.13:3001  \
+    racarlosdavid/dsu_frontend_chatapp
 
-docker run -d -p 3001:3001 --name api_gcpf_tarea4 --network mysupernetwork \
+docker run -d -p 3001:3001 --name dsu_backend_chatapp --network mysupernetwork \
     -e MONGO_URL=dbmongo \
     -e TOKEN_SECRET=Rocinante92129Alpha \
-    racarlosdavid/api_gcpf_tarea4
+    racarlosdavid/dsu_backend_chatapp
 ```
 
 ```sh
