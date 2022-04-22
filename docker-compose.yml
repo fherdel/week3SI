@@ -1,0 +1,33 @@
+version: '3.4'
+
+volumes:
+  mongodb:
+
+
+services:
+  dsuchat:
+    image: rauqoz/dsuchat
+    build:
+      context: dsu-si-backend
+      dockerfile: ./Dockerfile
+    environment:
+      IP_POINT: 192.168.0.7
+    ports:
+      - 3001:3001
+
+  reduxtutorial:
+    image: rauqoz/reduxtutorial
+    build:
+      context: dsu-si-week-3-front
+      dockerfile: ./Dockerfile
+    environment:
+      REACT_APP_IP_POINT: 192.168.0.7
+    ports:
+      - 3000:3000
+
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
