@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect(credentials.mongo.uri, { useNewUrlParser: true })
+	.connect(`mongodb://${credentials.mongo.host}:27017/admin`, { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.

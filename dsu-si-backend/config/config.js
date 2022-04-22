@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const credentials = {
     mongo: {
-        uri: `${process.env.MONGO_URL}`,     
+        host: `${process.env.MONGO_HOST}`,     
     }
 }
 
