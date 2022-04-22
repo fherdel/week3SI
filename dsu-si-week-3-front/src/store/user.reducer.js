@@ -5,6 +5,10 @@ import axios from "axios";
 
 
 
+
+
+
+
 // Slice
 
 // const initialUser = localStorage.getItem('user')
@@ -40,7 +44,6 @@ const { loginSuccess, logoutSuccess } = slice.actions;
 export const createUser = (username, password) =>  async (dispatch) =>{
   try {
     const userToken = localStorage.getItem('user')
-    console.log("token",userToken)
     
     let data = await axios.post("http://localhost:3001/user",{
       username,

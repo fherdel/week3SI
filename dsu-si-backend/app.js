@@ -80,7 +80,6 @@ app.post('/login', async (req,res)=>{
     return res.status(500).json(error)
   }
   const token = generateAccessToken({ username: user });
-  console.log("tken",token,user)
   res.status(200).json({user,token})
 })
 
