@@ -23,15 +23,19 @@ export default slice.reducer;
 // Actions
 
 const { pushMessage, setMessages } = slice.actions;
-
 export const addMessage = (username, message) => async (dispatch) => {
   console.log("user: ", username);
   console.log("message: ", message);
   try {
+    const token= window.localStorage.getItem("token")
     await axios
       .post("http://localhost:3001/messages", {
         username: username.username,
         message: message,
+      }, {
+        headers: {
+          'Authorization': `token ${token}`
+        },
       })
       .then((response) => {
         console.log(response);
@@ -50,7 +54,12 @@ export const addMessage = (username, message) => async (dispatch) => {
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://localhost:3001/messages");
+    const token= window.localStorage.getItem("token")
+    let data = await axios.get("http://localhost:3001/messages", {
+      headers: {
+        'Authorization': `token ${token}`
+      },
+    });
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {

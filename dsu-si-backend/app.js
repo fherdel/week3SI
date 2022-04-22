@@ -31,64 +31,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Enpoints
 require("./routes/routes")(app)
-// app.get('/users', async (req,res)=>{
-//   const users = await getUsers()
-//   res.json(users);
-// })
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+// get config vars
+dotenv.config();
 
-// app.get("/messages", async (req, res) => {
-//   try{
-//     const messages = await Message.find();
-//  return res.status(200).send(messages);
-//   }catch(e){
-//   return   res.send("Error");
-//   }
-// });
-
-// app.post("/messages",async(req, res) => {
-//   console.log("---")
-//   try{
-//     const message = new Message({username: req.body.username, message:req.body.message})
-//     await message.save()
-//  return res.send(message)
-//   }catch(e){
-//     return res.send("Error");
-//   }
-// })
-
-// /**
-//  * implement data on mongo
-//  */
-// app.post('/users', async (req,res)=>{
-//   console.log(">>>>>>>>>> post user")
-//   res.status(200).send("logic not implemented yet :c")
-// })
-
-// app.delete("/messages", (req, res) => {
-//   messagesService.clearMessages();
-//   io.emit("clearMessages");
-//   res.status(200).send();
-// });
-
-// app.post('/login', (req,res)=>{
-//   res.status(200).send("not implemented yet :'c")
-// })
-
-
-
-/**
- * implement data on mongo
- */
-// io.on("connection", (socket) => {
-//   connectionCount += 1;
-//   connectedUsers += 1;
-
-//   socket.on("chatMessageEmitted", ( {username, message} ) => {
-//     messagesService.addToMessageHistory( username, message );
-//     socket.broadcast.emit("chatMessageEmitted", { username, message });
-//   });
-// });
-
+// access config var
+process.env.TOKEN_SECRET;
 // Connect to MongoDB database
 mongoose
 	.connect("mongodb://localhost:27017/admin", { useNewUrlParser: true })

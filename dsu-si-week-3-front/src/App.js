@@ -8,7 +8,9 @@ import { getMessages, addMessage } from "./store/messages.reducer";
 import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
-
+const dotenv = require('dotenv');
+// get config vars
+dotenv.config();
 const ENDPOINT = "http://localhost:3001";
 let socket;
 function App() {

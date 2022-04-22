@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useSelector } from 'react-redux'
 
 // Slice
 
@@ -11,6 +12,7 @@ const slice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    token:null
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -26,6 +28,10 @@ const slice = createSlice({
       state.user = action.payload;
       //localStorage.removeItem('user')
     },
+    saveToken: (state, action) => {
+      state.token = action.payload;
+    },
+    
   },
 });
 
@@ -33,7 +39,7 @@ export default slice.reducer;
 
 // Actions
 
-const { loginSuccess, logoutSuccess, singinSuccess } = slice.actions;
+const { loginSuccess, logoutSuccess, singinSuccess, saveToken } = slice.actions;
 
 /**
  * agregue aca la logica para incrustar los usuarios
@@ -65,11 +71,10 @@ export const login =
         username:username,
         password:password,
       });
-      console.log("dataUser : ", data);
+      console.log("dataUser : ", data.data);
       dispatch(loginSuccess({username:username, password:password}));
-
-
-      
+      dispatch(saveToken({token:data.data.token}))
+      window.localStorage.setItem("token", data.data.token)
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);
@@ -82,9 +87,15 @@ export const login =
 export const logout = () => async (dispatch) => {
   try {
     // *****
+    window.localStorage.clear()
     return dispatch(logoutSuccess());
   } catch (e) {
     return console.error(e.message);
   }
 };
 
+
+
+export function useToken() {
+  return useSelector((state) => state.token)
+}

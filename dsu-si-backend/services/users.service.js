@@ -1,6 +1,6 @@
 const res = require("express/lib/response");
 const User = require("../schemas/user.schema");
-
+const jwt = require('jsonwebtoken');
 // Get all users
 module.exports.getUsers = async (req, res) => {
   try {
@@ -22,8 +22,10 @@ module.exports.createUser = async (req, res) => {
       username: req.body.username,
       password: req.body.password,
     });
-    await user.save();
-    return res.send(user);
+    const newUser = await user.save();
+    const token = generateAccessToken( {id:newUser._id} );
+
+    return res.status(200).send({user:user,token:token});
   } catch (e) {
    return res.status(400).send({ valid: false });
   }
@@ -31,7 +33,6 @@ module.exports.createUser = async (req, res) => {
 
 //Login
 module.exports.Login = async (req, res) => {
-console.log(req.body)
   try {
     const user = await User.findOne({ username: req.body.username }); 
     
@@ -42,9 +43,27 @@ console.log(req.body)
     if(user.password !== req.body.password){
         return res.status(405).send("Credentials not valid");
     }
-    return res.status(200).send(user);
+    const token = generateAccessToken( {id:user._id} );
+    return res.status(200).send({user:user,token:token});
   } catch (error) {
     console.log("error: ", error);
    return res.status(500).send({ valid: false });
   }
 };
+
+function generateAccessToken(id) {
+  process.env.TOKEN_SECRET;
+  try{
+  return jwt.sign(id, process.env.TOKEN_SECRET, { expiresIn: '1800s' });}
+  catch(e){
+    console.log(e)
+  }
+}
+// app.post('/api/createNewUser', (req, res) => {
+//   // ...
+
+//   const token = generateAccessToken({ username: req.body.username });
+//   res.json(token);
+
+//   // ...
+// });
