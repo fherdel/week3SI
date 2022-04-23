@@ -2,13 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 //import { useSelector } from "react-redux";
 
-
-
-
-
-
-
-
 // Slice
 
 // const initialUser = localStorage.getItem('user')
@@ -45,16 +38,16 @@ export const createUser = (username, password) =>  async (dispatch) =>{
   try {
     const userToken = localStorage.getItem('user')
     
-    let data = await axios.post("http://localhost:3001/user",{
+    let data = await axios.post(`http://${process.env.REACT_APP_MY_IP}:3001/user`,{
       username,
       password
     });
     console.log(data)
-    const user = {
+    /* const user = {
       username: data.data.data.username,
       password: data.data.data.password
     }
-    dispatch(loginSuccess(user));
+    dispatch(loginSuccess(user)); */
   } catch (error) {
     console.error(error.message)
   }
@@ -67,7 +60,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://localhost:3001/login", {
+      let data = await axios.post(`http://${process.env.REACT_APP_MY_IP}:3001/login`, {
         username,
         password,
       });

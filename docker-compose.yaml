@@ -1,0 +1,22 @@
+version: "3"
+services: 
+ react-app: 
+   build: 
+     context: ./dsu-si-week-3-front 
+   image: fernandoleiva29/dsu-si-frontend 
+   ports: 
+     - "3000:3000"
+   stdin_open: true
+ api-server:
+   build:
+     context: ./dsu-si-backend
+   image: fernandoleiva29/dsu-si-backend
+   ports:
+     - "3001:3001"
+   depends_on:
+     - mongoInstance
+ mongoInstance:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
