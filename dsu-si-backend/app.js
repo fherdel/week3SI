@@ -100,7 +100,7 @@ io.on("connection", (socket) => {
 
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://localhost:27017/dmongo", { useNewUrlParser: true })
+	.connect(`mongodb://${process.env.MY_IP}:27017/admin`, { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.

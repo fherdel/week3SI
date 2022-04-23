@@ -10,7 +10,7 @@ import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = `http://${process.env.REACT_APP_MY_IP}:3001`;
 let socket;
 function App() {
   const dispatch = useDispatch();
@@ -49,8 +49,6 @@ function App() {
    * add logic to create users
    */
   const handleSingIn = async (values, setSubmitting) => {
-    console.log("handleSingIn");
-    console.log("values: ", values);
     setSubmitting(true);
     dispatch(createUser(values.username,values.password))
     setSubmitting(false);

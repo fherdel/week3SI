@@ -25,12 +25,11 @@ export default slice.reducer;
 const { pushMessage, setMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-  console.log('user: ', username);
-  console.log('message: ', message);
+
   try {
     const userToken = JSON.parse(localStorage.getItem('user'))
     console.log("token",userToken)  
-    await axios.post('http://localhost:3001/message', { username, message },{
+    await axios.post(`http://${process.env.REACT_APP_MY_IP}:3001/message`, { username, message },{
       headers:{
         "Authorization" : `Bearer ${userToken.token}`
       }
@@ -48,7 +47,7 @@ export const addMessage = (username, message) => async (dispatch) => {
 export const getMessages = () => async (dispatch) => {
   try {
     const userToken = JSON.parse(localStorage.getItem('user'))
-    let data = await axios.get("http://localhost:3001/messages",{
+    let data = await axios.get(`http://${process.env.REACT_APP_MY_IP}:3001/messages`,{
       headers:{
         "Authorization" : `Bearer ${userToken.token}`
       }
