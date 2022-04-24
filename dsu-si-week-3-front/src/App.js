@@ -17,6 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
+    if(user){
     dispatch(getMessages());
     socket = socketIOClient(ENDPOINT);
     console.log("socket: ", socket);
@@ -27,8 +28,8 @@ function App() {
 
     socket.on("clearMessages", (x) => {
       console.log("clear messages: ", x);
-    });
-  }, []);
+    });}
+  }, [user]);
 
   const emitMessage = (username, message) => {
     console.log("-----", username);

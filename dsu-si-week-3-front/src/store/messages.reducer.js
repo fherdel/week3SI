@@ -60,8 +60,8 @@ export const getMessages = () => async (dispatch) => {
         'Authorization': `token ${token}`
       },
     });
-    console.log("data: ", data);
-    dispatch(setMessages(data));
+    console.log("data: ", data.data);
+    dispatch(setMessages({data:data.data}));
   } catch (e) {
     console.log("e: ", e);
     return console.error(e.message);
