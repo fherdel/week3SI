@@ -38,7 +38,7 @@ export const addMessage = (username, message) => async (dispatch) => {
 //obtener todos los mensajes
 export const getMessages = (token) => async (dispatch) => {
   try {
-    let data = await axios.get("http://localhost:3001/messages",
+    let data = await axios.get(process.env.REACT_APP_URLBACK+"/messages",
     {
       headers:{
         "Authorization": `Bearer: ${token}`
@@ -55,7 +55,7 @@ export const getMessages = (token) => async (dispatch) => {
 //eliminar todos los mensajes
 export const deleteAll = (token) => async (dispatch) => {
     try {
-      let data = await axios.delete("http://localhost:3001/messages",
+      let data = await axios.delete(process.env.REACT_APP_URLBACK+"/messages",
       {
         headers:{
           "Authorization": `Bearer: ${token}`

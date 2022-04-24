@@ -47,7 +47,7 @@ const { loginSuccess, logoutSuccess, signUpSuccess } = slice.actions;
  ({ username, password }) =>
  async (dispatch) => {
    try {
-     let data = await axios.post("http://localhost:3001/users", {
+     let data = await axios.post(process.env.REACT_APP_URLBACK+"/users", {
        username,
        password,
      });
@@ -68,7 +68,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://localhost:3001/login", {
+      let data = await axios.post(process.env.REACT_APP_URLBACK+"/login", {
         username,
         password,
       });

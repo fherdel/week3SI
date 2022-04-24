@@ -4,7 +4,7 @@ export default function Messages() {
   const { messages } = useSelector((state) => state.messages);
   const { user } = useSelector((state) => state.user);
   return (
-    <div style={{ margin: "10px 20px", height: 500, overflowY: "auto" }}>
+    <div style={{ margin: "10px 20px", height: 500, overflowY: "auto"}}>
       <h2 >Chat:</h2>
       {messages.map((message, index) => (
         <div

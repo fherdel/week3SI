@@ -9,14 +9,13 @@ import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = process.env.REACT_APP_URLBACK;
 let socket;
 function App() {
   const [status, setStatus]=useState(false)
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.user);
   useEffect(() => {
-    
     socket = socketIOClient(ENDPOINT);
     console.log("socket: ", socket);
     socket.on("chatMessageEmitted", ({ username, message }) => {

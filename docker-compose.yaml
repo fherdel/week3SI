@@ -1,0 +1,26 @@
+version: "3"
+services: 
+ react-app: 
+   build: 
+     context: ./dsu-si-week-3-front 
+   image: umgtato/dsu-si-front
+   environment:
+      REACT_APP_URLBACK: http://192.168.1.3:3001 
+   ports: 
+     - "3000:3000"
+   stdin_open: true
+ api-server:
+   build:
+     context: ./dsu-si-backend
+   image: umgtato/dsu-si-back
+   ports:
+     - "3001:3001"
+   depends_on:
+     - mongoInstance
+ mongoInstance:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/mongo/data:/data/db
