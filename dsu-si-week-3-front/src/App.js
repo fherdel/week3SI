@@ -66,9 +66,9 @@ function App() {
             position: "relative",
             top: "20vh",
           }}
-          class="container"
+          className="container"
         >
-          <div class="notification is-primary">
+          <div className="notification is-primary">
             <h1 className="is-size-1">Inicio de sesión</h1>
             <Formik
               initialValues={{ username: "", password: "" }}
@@ -91,12 +91,12 @@ function App() {
               {({ isSubmitting, values, setSubmitting }) => (
                 <Form>
                   <label>Username</label>
-                  <Field type="text" name="username" class="input is-success" />
+                  <Field type="text" name="username" className="input is-success" />
                   <label>Password</label>
                   <Field
                     type="password"
                     name="password"
-                    class="input is-success"
+                    className="input is-success"
                   />
                   <div
                     style={{
@@ -108,12 +108,12 @@ function App() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      class="button is-success is-light"
+                      className="button is-success is-light"
                     >
                       Login
                     </button>
                     <button
-                      class="button is-success is-light"
+                      className="button is-success is-light"
                       style={{ marginLeft: "2vh" }}
                       onClick={() => handleSingIn(values, setSubmitting)}
                       disabled={isSubmitting}
@@ -132,7 +132,7 @@ function App() {
             <h1 className="is-size-1" style={{color:"white"}}> {user.username}
             
             <button
-              class="button is-success is-light"
+              className="button is-success is-light"
               style={{position:"relative", left:"85%", top:"2vh"}}
               onClick={() => dispatch(logout())}
             >

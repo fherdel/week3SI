@@ -23,7 +23,7 @@ export default function ChatBar({ emitMessage }) {
 
         <input
         name="message"
-        class="input is-success"
+        className="input is-success"
         value = {message}
           style={{ width: "90%" }}
           type="text"
@@ -32,7 +32,7 @@ export default function ChatBar({ emitMessage }) {
             setMessage(e.target.value)}}
             ref={messageSubmit}
         />
-        <button onClick={sendMessage} disabled={false /* !user */} class="button is-success is-light">
+        <button onClick={sendMessage} disabled={false /* !user */} className="button is-success is-light">
           Submit
         </button>
       </span>
