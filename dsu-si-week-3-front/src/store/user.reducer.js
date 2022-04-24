@@ -48,7 +48,7 @@ const { loginSuccess, logoutSuccess, singinSuccess, saveToken } = slice.actions;
  ({ username, password }) =>
  async (dispatch) => {
    try {
-     let data = await axios.post("http://localhost:3001/user", {
+     let data = await axios.post(process.env.REACT_APP_ENDPOINT_USER, {
        username : username,
        password : password,
      });
@@ -67,7 +67,7 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      let data = await axios.post("http://localhost:3001/login", {
+      let data = await axios.post(process.env.REACT_APP_ENDPOINT_LOGIN, {
         username:username,
         password:password,
       });

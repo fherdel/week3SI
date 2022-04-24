@@ -29,7 +29,7 @@ export const addMessage = (username, message) => async (dispatch) => {
   try {
     const token= window.localStorage.getItem("token")
     await axios
-      .post("http://localhost:3001/messages", {
+      .post(process.env.REACT_APP_ENDPOINT_MESSAGES, {
         username: username.username,
         message: message,
       }, {
@@ -55,13 +55,13 @@ export const addMessage = (username, message) => async (dispatch) => {
 export const getMessages = () => async (dispatch) => {
   try {
     const token= window.localStorage.getItem("token")
-    let data = await axios.get("http://localhost:3001/messages", {
+    let data = await axios.get(process.env.REACT_APP_ENDPOINT_MESSAGES, {
       headers: {
         'Authorization': `token ${token}`
       },
     });
-    console.log("data: ", data.data);
-    dispatch(setMessages({data:data.data}));
+    console.log("data: ", data);
+    dispatch(setMessages(data));
   } catch (e) {
     console.log("e: ", e);
     return console.error(e.message);

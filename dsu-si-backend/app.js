@@ -40,7 +40,7 @@ dotenv.config();
 process.env.TOKEN_SECRET;
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://localhost:27017/admin", { useNewUrlParser: true })
+	.connect(process.env.HOST, { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.

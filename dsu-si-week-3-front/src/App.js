@@ -11,7 +11,7 @@ import ChatBar from "./components/ChatBar";
 const dotenv = require('dotenv');
 // get config vars
 dotenv.config();
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 let socket;
 function App() {
   const dispatch = useDispatch();
