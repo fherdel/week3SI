@@ -2,17 +2,26 @@ version: "3"
 services: 
  react-app: 
    build: 
-     context: ./dsu-si-week-3-front 
-   image: gmrp/dsu-si-week-3-front 
+     context: ./dsu-si-frontend
+   image: gmrp/dsu-si-frontend
    ports: 
      - "3000:3000"
    stdin_open: true
+   depends_on:
+     - api-server
+   environment:
+      - REACT_APP_ENDPOINT=http://localhost:3001
+      - REACT_APP_ENDPOINT_MESSAGES=http://localhost:3001/messages
+      - REACT_APP_ENDPOINT_USER=http://localhost:3001/user
+      - REACT_APP_ENDPOINT_LOGIN=http://localhost:3001/login    
  api-server:
    build:
      context: ./dsu-si-backend
-   image: gmrp/dsu-si-back
+   image: gmrp/dsu-si-backend
    ports:
      - "3001:3001"
+   environment:
+      - HOST=mongodb://mongoInstance:27017/admin 
    depends_on:
      - mongoInstance
  mongoInstance:
