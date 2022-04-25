@@ -1,6 +1,7 @@
 
 const UserModel = require("../schemas/user.schema")
-
+const {verifyToken} = require('./token-verify')
+const {signToken} = require('./token-sign')
 // Get all users
 module.exports.getUsers = async (req, res) => {
 	try {
@@ -20,16 +21,14 @@ module.exports.getUsers = async (req, res) => {
 module.exports.createUser = async (username, password)=>{
     try {
         let verifyUser = await UserModel.findOne({username});
-        console.log(verifyUser + " xlll")
+        console.log(verifyUser)
         if (verifyUser === null) {
-            console.log('values: ', username, password);
-            const newUser = new UserModel({username,password});
-            // console.log(verifyUser)
-            // const verifyUser = await UserModel.findOne({username});
+            const token = signToken({username, password})
+            console.log('values: ', username, password, token);
+            const newUser = new UserModel({token, username,password});
             newUser.save();
-            return {verifyUser}
+            return newUser
         }else{
-            console.log('theres already one')
             throw Error('theres already one with that same username')
         }
         
@@ -39,9 +38,7 @@ module.exports.createUser = async (username, password)=>{
 }
 
 module.exports.logIn = async(username, password)=>{
-    const verifyUser = await UserModel.findOne({username});
-    // console.log(verifyUser)
-    // console.log('llll')
+    const verifyUser = await UserModel.findOne({username,password});
     if (verifyUser.password === password) {
         return{
             verifyUser

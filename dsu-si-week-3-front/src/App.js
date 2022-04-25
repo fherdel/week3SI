@@ -9,37 +9,30 @@ import socketIOClient from "socket.io-client";
 import Messages from "./components/Messages";
 import ChatBar from "./components/ChatBar";
 
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
+console.log(ENDPOINT)
 let socket;
-// console.log(user)
 function App() {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  console.log(user)
+  const { user, token } = useSelector((state) => state.user);
+
   useEffect(() => {
-    dispatch(getMessages());
-    socket = socketIOClient(ENDPOINT);
-    console.log("socket: ", socket);
+    if (user) {  
+      // console.log( token)    
+      dispatch(getMessages());
+      socket = socketIOClient(ENDPOINT);
+      console.log("socket: ", socket);
+      
+      socket.on("chatMessageEmitted", ({ username, message }) => {
+          dispatch(addMessage( user, message ))
+        });
     
-    socket.on("chatMessageEmitted", ({ username, message }) => {
-        dispatch(addMessage( username, message ))
-      });
-  
-      socket.on("clearMessages", (x) => {
-        console.log("clear messages: ", x);
-      });
+        socket.on("clearMessages", (x) => {
+          console.log("clear messages: ", x);
+        });
+    }
 
-  }, [dispatch]);
-
-  if (user) {
-    return (
-      <div>
-        {user.username}
-        <button onClick={() => dispatch(logout())}>Logout</button>
-      </div>
-    );
-  }
-
+  }, [user]);
 
   const emitMessage = (username, message) => {
     socket.emit("chatMessageEmitted", {
@@ -48,6 +41,26 @@ function App() {
     });
     dispatch(addMessage( user, message ))
   };
+  
+  if (user) {
+    return (
+      <>
+      <div>
+        {user.username}
+        <button onClick={() => dispatch(logout())}>Logout</button>
+      </div>
+      <button
+        onClick={deleteMessages}
+      >
+        Delete Messages
+      </button>
+      <Messages  />
+      <ChatBar emitMessage={emitMessage}/>
+      </>
+    );
+  }
+
+
 
   /**
    * add logic to create users
@@ -111,25 +124,15 @@ function App() {
               >
                 Logout
               </button>
-              <button
-                onClick={deleteMessages}
-                disabled={isSubmitting}
-              >
-                Delete Messages
-              </button>
               </>
               }
             </Form>
           )}
         </Formik>
       </div>
-      {/* {user
-        && */}
         <>
-          <Messages  />
-          <ChatBar emitMessage={emitMessage}/>
         </>
-      {/* } */}
+
     </div>
   );
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server,  { 
@@ -14,7 +15,6 @@ app.use(express.json());
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
 const { getUsers, createUser, logIn } = require("./services/users.service");
-
 let connectionCount = 0;
 let connectedUsers = 0;
 
@@ -31,7 +31,7 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", async(req, res) => {
+app.get("/messages/", async(req, res) => {
   try {
     const messages= await messagesService.getMessagesHistory()
     res.status(200).send(messages);
@@ -47,15 +47,13 @@ app.post('/signin', async (req,res)=>{
   try {
     const user =  req.body.username;
     const password = req.body.password;
-    // console.log('h')
-    console.log(user, password)
     const newUser = await createUser(user, password);
-    // console.log(newUser.verifyUser)
-    console.log(newUser.verifyUser.password, newUser.verifyUser.username)
+    console.log(newUser.username)
     res.status(200).send({
       message: "new user created",
       User:{
-        username: newUser.verifyUser.username,
+        token: newUser.token,
+        username: newUser.username,
       }
     })
   } catch (error) {
@@ -65,9 +63,9 @@ app.post('/signin', async (req,res)=>{
 
 app.post('/message', async (req,res)=>{
   try {
-    const username =  req.body.username;
+    const token =  req.body.token;
     const message = req.body.message;
-    const newMessage = await messagesService.addToMessageHistory( username, message );
+    const newMessage = await messagesService.addToMessageHistory( token, message );
     console.log('ll')
     console.log(newMessage)
     res.status(200).send({
@@ -81,8 +79,8 @@ app.post('/message', async (req,res)=>{
 
 app.delete("/messages", (req, res) => {
   try {
-    
-    messagesService.clearMessages();
+    const token = req.body.token
+    messagesService.clearMessages(token);
     io.emit("clearMessages");
     res.status(200).send({
       message: "all messages were deleted"
@@ -102,7 +100,7 @@ app.post('/login', async(req,res)=>{
     console.log(user)
     res.status(200).send({
       message: "log in Successfully",
-      id: user.verifyUser.id,
+      token: user.verifyUser.token,
       username: user.verifyUser.username
     })
     
@@ -123,10 +121,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("chatMessageEmitted", { username, message });
   });
 });
-
+const mongoRoute = process.env.MONGO
 // Connect to MongoDB database
 mongoose
-	.connect("mongodb://localhost:27017/admin", { useNewUrlParser: true })
+	.connect(mongoRoute, { useNewUrlParser: true })
 	.then(() => {
 
 // Starting server.

@@ -1,12 +1,18 @@
 
 const messagesModel = require('../schemas/message.schema') 
+// const {verifyToken} = require('./token-verify')
 /**
  * get here messages from mongo messages collection
  */
 const getMessagesHistory = async() => {
-  const messages = await messagesModel.find();
-  // console.log(messages)
-  return messages 
+  try {
+
+      const messages = await messagesModel.find();
+      // console.log(messages)
+      return messages 
+  } catch (error) {
+    throw Error(error)
+  }
 }
 /**
  * add here messages to mongo messages collection
@@ -31,8 +37,16 @@ const addToMessageHistory = async( username, message ) =>{
 /**
  * delete messages from mongo messages collection
  */
-const clearMessages = async() => {
-  await messagesModel.deleteMany({})
+const clearMessages = async(username) => {
+  try {
+    if (username !== "") {
+      await messagesModel.deleteMany({})
+    }else{
+      throw Error("Missing token")
+    }
+  } catch (error) {
+    throw Error(error)
+  }
 };
 
 module.exports = { getMessagesHistory, addToMessageHistory, clearMessages };

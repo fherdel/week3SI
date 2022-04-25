@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 // Slice
-
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const slice = createSlice({
   name: "messages",
   initialState: {
@@ -46,7 +46,7 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://localhost:3001/messages");
+    let data = await axios.get(`${ENDPOINT}/messages/`);
     console.log("data: ", data);
     dispatch(setMessages(data));
   } catch (e) {
@@ -57,7 +57,7 @@ export const getMessages = () => async (dispatch) => {
 
 export const deleteMessages = () => async (dispatch) => {
   try {
-    let data = await axios.delete("http://localhost:3001/messages");
+    let data = await axios.delete(`${ENDPOINT}/messages`);
     console.log("data: ", data);
     dispatch(removeMessages());
   } catch (e) {

@@ -1,24 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const slice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    token: null
   },
   reducers: {
     loginSuccess: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.username;
+      state.token = action.payload.token
       // localStorage.setItem('user', JSON.stringify(action.payload))
     },
     logoutSuccess: (state, action) => {
-      console.log(state.user)
+      // console.log(state.user)
       state.user = null;
+      state.token = null;
       // localStorage.removeItem('user')
     },
     signinSuccess: (state, action) => {
-      state.user = action.payload;
+      // console.log(action, "ho")
+      state.user = action.payload.username;
+      state.token = action.payload.token
       // localStorage.setItem('user', JSON.stringify(action.payload))
     },
   },
@@ -38,15 +43,18 @@ export const login =
   async (dispatch) => {
     try {
       // console.log(username, password)
-      let data = await axios.post("http://localhost:3001/login", {
+      let response = await axios.post(`${ENDPOINT}/login`, {
         username,
         password,
       })
-      if (data) {
-        
+      if (response) {
+        const payload = {
+          username: response.data.username,
+          token: response.data.token
+        }
+        // console.log("data: ", data.data);
+        dispatch(loginSuccess(payload));
       }
-      console.log("data: ", data.data);
-      dispatch(loginSuccess(data.data.username));
     } catch (e) {
       console.log("e: ", e);
       return console.error(e.message);
@@ -68,14 +76,18 @@ export const signin =
   ({ username, password }) => 
   async (dispatch) => {
     try {
-      // console.log(username, password)
-      let response = await axios.post("http://localhost:3001/signin", {
+      console.log(username, password)
+      let response = await axios.post(`${ENDPOINT}/signin`, {
         username,
         password,
       })
-      console.log("data: ", response.data.User.username);
-      if (response.data.User.username) {
-        dispatch(signinSuccess(response.data.User.username));
+      console.log("data: ", response.data);
+      if (response.data.User.username && response.data.User.token) {
+        const payload = {
+          username: response.data.User.username,
+          token: response.data.User.token
+        }
+        dispatch(signinSuccess(payload));
       }
     } catch (e) {
       return console.error(e.message);
