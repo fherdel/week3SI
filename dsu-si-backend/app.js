@@ -10,7 +10,7 @@ const io = new Server(server,  {
   }});
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
-
+app.use(express.json());
 const mongoose = require("mongoose")
 const messagesService = require("./services/messages.service");
 const { getUsers, createUser, logIn } = require("./services/users.service");
@@ -31,23 +31,48 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages", (req, res) => {
-  const messages=messagesService.getMessagesHistory()
-  res.json(messages);
+app.get("/messages", async(req, res) => {
+  try {
+    const messages= await messagesService.getMessagesHistory()
+    res.status(200).send(messages);
+  } catch (error) {
+    console.log(error)
+  }
 });
 
 /**
  * implement data on mongo
  */
-app.post('/users', async (req,res)=>{
+app.post('/signin', async (req,res)=>{
   try {
-    const user =  req.body.user;
+    const user =  req.body.username;
     const password = req.body.password;
+    // console.log('h')
+    console.log(user, password)
     const newUser = await createUser(user, password);
-    console.log(newUser)
+    // console.log(newUser.verifyUser)
+    console.log(newUser.verifyUser.password, newUser.verifyUser.username)
     res.status(200).send({
       message: "new user created",
-      user
+      User:{
+        username: newUser.verifyUser.username,
+      }
+    })
+  } catch (error) {
+    res.status(400).send({message: error})
+  }
+})
+
+app.post('/message', async (req,res)=>{
+  try {
+    const username =  req.body.username;
+    const message = req.body.message;
+    const newMessage = await messagesService.addToMessageHistory( username, message );
+    console.log('ll')
+    console.log(newMessage)
+    res.status(200).send({
+      message: "new user created",
+      newMessage
     })
   } catch (error) {
     res.status(400).send({message: error})
@@ -55,19 +80,30 @@ app.post('/users', async (req,res)=>{
 })
 
 app.delete("/messages", (req, res) => {
-  messagesService.clearMessages();
-  io.emit("clearMessages");
-  res.status(200).send();
+  try {
+    
+    messagesService.clearMessages();
+    io.emit("clearMessages");
+    res.status(200).send({
+      message: "all messages were deleted"
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error
+    })
+  }
 });
 
 app.post('/login', async(req,res)=>{
   try {
-    const newUser = req.body.user;
+    const newUser = req.body.username;
     const password = req.body.password;
     const user = await logIn(newUser, password)
+    console.log(user)
     res.status(200).send({
       message: "log in Successfully",
-      user
+      id: user.verifyUser.id,
+      username: user.verifyUser.username
     })
     
   } catch (error) {
@@ -82,8 +118,8 @@ io.on("connection", (socket) => {
   connectionCount += 1;
   connectedUsers += 1;
 
-  socket.on("chatMessageEmitted", ( {username, message} ) => {
-    messagesService.addToMessageHistory( username, message );
+  socket.on("chatMessageEmitted", async( {username, message} ) => {
+    await messagesService.addToMessageHistory( username, message );
     socket.broadcast.emit("chatMessageEmitted", { username, message });
   });
 });

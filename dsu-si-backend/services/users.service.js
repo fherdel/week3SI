@@ -1,5 +1,5 @@
 
-const UserModel =require("../schemas/user.schema")
+const UserModel = require("../schemas/user.schema")
 
 // Get all users
 module.exports.getUsers = async (req, res) => {
@@ -17,21 +17,36 @@ module.exports.getUsers = async (req, res) => {
 /**
  * add here post for users
  */
-module.exports.createUser = async (user, password)=>{
-    console.log('values: ', user, password);
-    const newUser = new UserModel({user,password});
-    user.save();
-    return {user,password}
+module.exports.createUser = async (username, password)=>{
+    try {
+        let verifyUser = await UserModel.findOne({username});
+        console.log(verifyUser + " xlll")
+        if (verifyUser === null) {
+            console.log('values: ', username, password);
+            const newUser = new UserModel({username,password});
+            // console.log(verifyUser)
+            // const verifyUser = await UserModel.findOne({username});
+            newUser.save();
+            return {verifyUser}
+        }else{
+            console.log('theres already one')
+            throw Error('theres already one with that same username')
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-module.exports.logIn = async(user, password)=>{
-    const verifyUser = await UserModel.findOne({user});
+module.exports.logIn = async(username, password)=>{
+    const verifyUser = await UserModel.findOne({username});
+    // console.log(verifyUser)
+    // console.log('llll')
     if (verifyUser.password === password) {
-        const {id} = verifyUser;
         return{
-            id
+            verifyUser
         }
     } else {
-        
+        throw Error('password doesnt match')
     }
 }

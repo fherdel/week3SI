@@ -5,15 +5,28 @@ const messagesModel = require('../schemas/message.schema')
  */
 const getMessagesHistory = async() => {
   const messages = await messagesModel.find();
-  console.log(messages)
+  // console.log(messages)
   return messages 
 }
 /**
  * add here messages to mongo messages collection
  */
-const addToMessageHistory = ( username, message ) =>{
-  const newMessage = new messagesModel({username, message})
-  newMessage.save();
+const addToMessageHistory = async( username, message ) =>{
+  try {
+    if (username !== "" && message !== "") {
+      const newMessage = new messagesModel({username, message})
+      newMessage.save();
+      const verifyMSG = messagesModel.findOne({username, message})
+      return verifyMSG;
+      
+    }else{
+      throw Error('missing params')
+    }
+
+  } catch (error) {
+    console.log(error)
+    throw Error(error)
+  }
 }
 /**
  * delete messages from mongo messages collection

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 export default function Messages() {
   const { messages } = useSelector((state) => state.messages);
-  console.log("messages: ?????", messages);
+  // console.log("messages: ?????", messages);
   return (
     <div style={{ margin: "10px 20px", height: 500, overflowY: "auto" }}>
       <h2 >Chat:</h2>

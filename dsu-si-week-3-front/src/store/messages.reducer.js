@@ -15,6 +15,9 @@ const slice = createSlice({
     setMessages: (state, action) => {
       state.messages = action.payload.data;
     },
+    removeMessages: (state, action) => {
+      state.messages = [];
+    },
   },
 });
 
@@ -22,13 +25,16 @@ export default slice.reducer;
 
 // Actions
 
-const { pushMessage, setMessages } = slice.actions;
+const { pushMessage, setMessages, removeMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
 console.log('user: ', username);
 console.log('message: ', message);
   try {
-    // await api.post('/message/', { user, message })
+    // await axios.post("http://localhost:3001/message", {
+    //     username,
+    //     message,
+    //   })
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
@@ -40,9 +46,20 @@ console.log('message: ', message);
  */
 export const getMessages = () => async (dispatch) => {
   try {
-    let data = await axios.get("http://192.168.1.10:3001/messages");
+    let data = await axios.get("http://localhost:3001/messages");
     console.log("data: ", data);
     dispatch(setMessages(data));
+  } catch (e) {
+    console.log("e: ", e);
+    return console.error(e.message);
+  }
+};
+
+export const deleteMessages = () => async (dispatch) => {
+  try {
+    let data = await axios.delete("http://localhost:3001/messages");
+    console.log("data: ", data);
+    dispatch(removeMessages());
   } catch (e) {
     console.log("e: ", e);
     return console.error(e.message);
