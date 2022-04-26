@@ -1,15 +1,16 @@
 
 const messagesModel = require('../schemas/message.schema') 
-// const {verifyToken} = require('./token-verify')
+const {verifyToken} = require('./token-verify')
 /**
  * get here messages from mongo messages collection
  */
-const getMessagesHistory = async() => {
+const getMessagesHistory = async(token) => {
   try {
-
-      const messages = await messagesModel.find();
-      // console.log(messages)
-      return messages 
+      const {username} = verifyToken(token);
+      if (username) {
+        const messages = await messagesModel.find();
+        return messages 
+      }
   } catch (error) {
     throw Error(error)
   }
@@ -17,9 +18,11 @@ const getMessagesHistory = async() => {
 /**
  * add here messages to mongo messages collection
  */
-const addToMessageHistory = async( username, message ) =>{
+const addToMessageHistory = async(token, username, message ) =>{
   try {
+
     if (username !== "" && message !== "") {
+      verifyToken(token)
       const newMessage = new messagesModel({username, message})
       newMessage.save();
       const verifyMSG = messagesModel.findOne({username, message})
@@ -30,16 +33,16 @@ const addToMessageHistory = async( username, message ) =>{
     }
 
   } catch (error) {
-    console.log(error)
     throw Error(error)
   }
 }
 /**
  * delete messages from mongo messages collection
  */
-const clearMessages = async(username) => {
+const clearMessages = async(token) => {
   try {
-    if (username !== "") {
+    if (token !== "") {
+      verifyToken(token)
       await messagesModel.deleteMany({})
     }else{
       throw Error("Missing token")

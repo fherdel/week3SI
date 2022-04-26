@@ -42,7 +42,6 @@ export const login =
   ({ username, password }) =>
   async (dispatch) => {
     try {
-      // console.log(username, password)
       let response = await axios.post(`${ENDPOINT}/login`, {
         username,
         password,
@@ -52,7 +51,6 @@ export const login =
           username: response.data.username,
           token: response.data.token
         }
-        // console.log("data: ", data.data);
         dispatch(loginSuccess(payload));
       }
     } catch (e) {

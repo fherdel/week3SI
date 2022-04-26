@@ -6,11 +6,9 @@ const {signToken} = require('./token-sign')
 module.exports.getUsers = async (req, res) => {
 	try {
         const users = await UserModel.find()
-        console.log('users: ', users);
         return users
     }
     catch (error) {
-        console.log('error: ', error);
         res.status(500).send({valid:false})
     }
 }
@@ -21,10 +19,8 @@ module.exports.getUsers = async (req, res) => {
 module.exports.createUser = async (username, password)=>{
     try {
         let verifyUser = await UserModel.findOne({username});
-        console.log(verifyUser)
         if (verifyUser === null) {
             const token = signToken({username, password})
-            console.log('values: ', username, password, token);
             const newUser = new UserModel({token, username,password});
             newUser.save();
             return newUser
@@ -33,7 +29,7 @@ module.exports.createUser = async (username, password)=>{
         }
         
     } catch (error) {
-        console.log(error)
+        throw Error(error)
     }
 }
 

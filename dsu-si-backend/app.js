@@ -31,12 +31,13 @@ app.get('/users', async (req,res)=>{
   res.json(users);
 })
 
-app.get("/messages/", async(req, res) => {
+app.get("/messages/:token", async(req, res) => {
   try {
-    const messages= await messagesService.getMessagesHistory()
+    const token = req.params.token
+    const messages= await messagesService.getMessagesHistory(token)
     res.status(200).send(messages);
   } catch (error) {
-    console.log(error)
+    throw Error(error)
   }
 });
 
@@ -48,7 +49,6 @@ app.post('/signin', async (req,res)=>{
     const user =  req.body.username;
     const password = req.body.password;
     const newUser = await createUser(user, password);
-    console.log(newUser.username)
     res.status(200).send({
       message: "new user created",
       User:{
@@ -66,8 +66,6 @@ app.post('/message', async (req,res)=>{
     const token =  req.body.token;
     const message = req.body.message;
     const newMessage = await messagesService.addToMessageHistory( token, message );
-    console.log('ll')
-    console.log(newMessage)
     res.status(200).send({
       message: "new user created",
       newMessage
@@ -77,9 +75,9 @@ app.post('/message', async (req,res)=>{
   }
 })
 
-app.delete("/messages", (req, res) => {
+app.delete("/messages/:token", (req, res) => {
   try {
-    const token = req.body.token
+    const token = req.params.token
     messagesService.clearMessages(token);
     io.emit("clearMessages");
     res.status(200).send({
@@ -97,7 +95,6 @@ app.post('/login', async(req,res)=>{
     const newUser = req.body.username;
     const password = req.body.password;
     const user = await logIn(newUser, password)
-    console.log(user)
     res.status(200).send({
       message: "log in Successfully",
       token: user.verifyUser.token,
@@ -116,8 +113,8 @@ io.on("connection", (socket) => {
   connectionCount += 1;
   connectedUsers += 1;
 
-  socket.on("chatMessageEmitted", async( {username, message} ) => {
-    await messagesService.addToMessageHistory( username, message );
+  socket.on("chatMessageEmitted", async( {token, username, message} ) => {
+    await messagesService.addToMessageHistory( token, username, message );
     socket.broadcast.emit("chatMessageEmitted", { username, message });
   });
 });

@@ -18,8 +18,7 @@ function App() {
 
   useEffect(() => {
     if (user) {  
-      // console.log( token)    
-      dispatch(getMessages());
+      dispatch(getMessages(token));
       socket = socketIOClient(ENDPOINT);
       console.log("socket: ", socket);
       
@@ -34,8 +33,9 @@ function App() {
 
   }, [user]);
 
-  const emitMessage = (username, message) => {
+  const emitMessage = (token, username, message) => {
     socket.emit("chatMessageEmitted", {
+      token,
       username,
       message,
     });
@@ -50,7 +50,7 @@ function App() {
         <button onClick={() => dispatch(logout())}>Logout</button>
       </div>
       <button
-        onClick={deleteMessages}
+        onClick={() => dispatch(deleteMessages(token))}
       >
         Delete Messages
       </button>
@@ -66,10 +66,8 @@ function App() {
    * add logic to create users
    */
   const handleSingIn = async(values, setSubmitting) => {
-    // console.log("handleSingIn");
     setSubmitting(true);
     await dispatch(signin(values))
-    // console.log("values: ", values);
     setSubmitting(false);
     console.log(user)
   };

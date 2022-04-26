@@ -9,7 +9,6 @@ const slice = createSlice({
   },
   reducers: {
     pushMessage: (state, action) => {
-    console.log('action: ', action);
       state.messages = [...state.messages, action.payload];
     },
     setMessages: (state, action) => {
@@ -28,13 +27,7 @@ export default slice.reducer;
 const { pushMessage, setMessages, removeMessages } = slice.actions;
 
 export const addMessage = (username, message) => async (dispatch) => {
-console.log('user: ', username);
-console.log('message: ', message);
   try {
-    // await axios.post("http://localhost:3001/message", {
-    //     username,
-    //     message,
-    //   })
     dispatch(pushMessage({ message, username }));
   } catch (e) {
     return console.error(e.message);
@@ -44,24 +37,20 @@ console.log('message: ', message);
 /**
  * agregue aca la logica para incrustar los usuarios
  */
-export const getMessages = () => async (dispatch) => {
+export const getMessages = (token) => async (dispatch) => {
   try {
-    let data = await axios.get(`${ENDPOINT}/messages/`);
-    console.log("data: ", data);
+    let data = await axios.get(`${ENDPOINT}/messages/${token}`);
     dispatch(setMessages(data));
   } catch (e) {
-    console.log("e: ", e);
     return console.error(e.message);
   }
 };
 
-export const deleteMessages = () => async (dispatch) => {
+export const deleteMessages = (token) => async (dispatch) => {
   try {
-    let data = await axios.delete(`${ENDPOINT}/messages`);
-    console.log("data: ", data);
+    let response = await axios.delete(`${ENDPOINT}/messages/${token}`)
     dispatch(removeMessages());
   } catch (e) {
-    console.log("e: ", e);
     return console.error(e.message);
   }
 };

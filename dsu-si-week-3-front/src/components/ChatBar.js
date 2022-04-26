@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function ChatBar({ emitMessage }) {
-  const { user } = useSelector((state) => state.user);
+  const { user, token } = useSelector((state) => state.user);
   const [message, setMessage] = useState("");
   // console.log('message: ', message);
 
   const sendMessage = () => {
     // console.log(user, message);
     emitMessage(
+      token,
       user || "unknown",
       message,
     );
