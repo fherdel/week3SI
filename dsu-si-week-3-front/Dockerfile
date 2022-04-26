@@ -1,10 +1,12 @@
-FROM node:16.3.0-alpine
+FROM node:12-alpine
 
 WORKDIR /usr/src/app
 
 COPY . .
 
 COPY ./package.json .
+
+ENV REACT_APP_ENDPOINT=http://192.168.252.39:3001
 
 RUN npm install
 

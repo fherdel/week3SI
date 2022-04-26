@@ -1,10 +1,14 @@
-FROM node:16.3.0-alpine
+FROM node:17-alpine
+
 
 WORKDIR /usr/src/app
 
 COPY . .
 
 COPY ./package.json .
+
+ENV SECRET=Bruno
+ENV MONGO=mongodb://192.168.252.39:27017/admin
 
 RUN npm install
 
