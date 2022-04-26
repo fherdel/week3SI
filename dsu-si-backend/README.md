@@ -1,5 +1,8 @@
 <h1>DSU Chat App</h1>
-
+<h2>Imagenes links: </h2>
+- https://hub.docker.com/r/gmrp/dsu-si-frontend
+- https://hub.docker.com/r/gmrp/dsu-si-backend
+- Deje un docker compose
 <section id="summary">
   <div>
     <p>
